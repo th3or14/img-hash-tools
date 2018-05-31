@@ -1,0 +1,8 @@
+project(similar-images-finder)
+find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+add_executable(${PROJECT_NAME} widget.ui widget.hpp widget.cpp main.cpp)
+target_link_libraries(${PROJECT_NAME} kernel Qt5::Core Qt5::Widgets)
