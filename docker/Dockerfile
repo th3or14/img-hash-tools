@@ -12,7 +12,7 @@ ENV QT_XKB_CONFIG_ROOT=/usr/share/X11/xkb
 # install opencv
 RUN wget -O opencv-3.4.1.tar.gz https://codeload.github.com/opencv/opencv/tar.gz/3.4.1 && tar -xf opencv-3.4.1.tar.gz && rm opencv-3.4.1.tar.gz
 RUN wget -O opencv_contrib-3.4.1.tar.gz https://codeload.github.com/opencv/opencv_contrib/tar.gz/3.4.1 && tar -xf opencv_contrib-3.4.1.tar.gz && rm opencv_contrib-3.4.1.tar.gz
-RUN cd opencv-3.4.1 && mkdir build && cd build && cmake -DENABLE_PRECOMPILED_HEADERS=OFF -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_DOCS=OFF -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-3.4.1/modules .. && make -j $(nproc --all) && make install && rm -r /opencv-3.4.1 /opencv_contrib-3.4.1
+RUN cd opencv-3.4.1 && mkdir build && cd build && cmake -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_DOCS=OFF -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-3.4.1/modules .. && make -j $(nproc --all) && make install && rm -r /opencv-3.4.1 /opencv_contrib-3.4.1
 
 # build img-hash-tools
 RUN wget -O img-hash-tools-master.zip https://github.com/th3or14/img-hash-tools/archive/master.zip && unzip img-hash-tools-master.zip && rm img-hash-tools-master.zip && mv img-hash-tools-master img-hash-tools
