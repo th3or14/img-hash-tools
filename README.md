@@ -17,3 +17,9 @@ Similar images finder helps to remove duplicates and almost duplicates from a sp
 ## Running in a Docker container on Linux/X11
 
 As an alternative to installation you can build and run this project in a Docker container. Docker is required (checked version 18.03.1-ce). Run `docker/start.sh` for a quick start. Afterwards you can use created symlinks to the built applications in the root directory of a running container and give access to input data through a shared folder.
+
+## Known issues
+
+#### Similar images finder: window content is transparent on first start in a Docker container
+
+Resize the window or restart the application.
