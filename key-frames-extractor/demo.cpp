@@ -39,7 +39,8 @@ DemoVideo::DemoVideo(const std::string &input_video_filename, const std::string 
     input_video_filename(input_video_filename), output_location(output_location),
     timestamp_format("HH-mm-ss-zzz"), datetimestamp_format("yyyy-MM-ddT" + timestamp_format),
     key_frames_directory(output_location + "/" +
-                         QDateTime::currentDateTime().toString(datetimestamp_format).toStdString()) {}
+                         QDateTime::currentDateTime().toString(datetimestamp_format).toStdString())
+{}
 
 void DemoVideo::locate_key_frames()
 {
