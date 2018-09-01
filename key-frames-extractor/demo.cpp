@@ -37,8 +37,9 @@ void DemoVideo::start(const std::string &input_video_filename, const std::string
 
 DemoVideo::DemoVideo(const std::string &input_video_filename, const std::string &output_location) :
     input_video_filename(input_video_filename), output_location(output_location),
+    timestamp_format("HH-mm-ss-zzz"), datetimestamp_format("yyyy-MM-ddT" + timestamp_format),
     key_frames_directory(output_location + "/" +
-                         QDateTime::currentDateTime().toString(Qt::ISODateWithMs).toStdString()) {}
+                         QDateTime::currentDateTime().toString(datetimestamp_format).toStdString()) {}
 
 void DemoVideo::locate_key_frames()
 {
@@ -85,7 +86,7 @@ void DemoVideo::extract_key_frames()
             cap.retrieve(curr_frame);
             cv::imwrite(key_frames_directory + "/" + QTime::fromMSecsSinceStartOfDay(
                             cap.get(CV_CAP_PROP_POS_MSEC)).toString(
-                            Qt::ISODateWithMs).toStdString() + ".jpg", curr_frame);
+                            timestamp_format).toStdString() + ".jpg", curr_frame);
             ++key_frame_num_it;
         }
         printer.print_if_percent_changed(curr_frame_num + 1, key_frame_nums->back() + 1,
