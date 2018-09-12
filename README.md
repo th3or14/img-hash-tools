@@ -2,7 +2,15 @@
 
 Key frames extractor converts an input video into a serie of key frames for easier browsing.
 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/37025359/45453867-ba5c1700-b6ea-11e8-9cae-2847bc745f14.jpg">
+</p>
+
 Similar images finder helps to remove duplicates and almost duplicates from a specified pictures collection.
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/37025359/45453877-bcbe7100-b6ea-11e8-8080-b601d207fc94.jpg">
+</p>
 
 ## Requirements
 
