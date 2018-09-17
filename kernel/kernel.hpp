@@ -10,6 +10,7 @@
 class HashHandlerBase
 {
 public:
+    virtual ~HashHandlerBase() = default;
     cv::Mat compute(const cv::Mat &img);
     bool compare(const cv::Mat &hash_a, const cv::Mat &hash_b) const;
 
