@@ -142,7 +142,7 @@ std::vector<std::unique_ptr<ImageData>> Widget::get_hashes_pool()
             if (img.empty())
                 throw std::runtime_error("Empty image " + dir_it->filePath().toStdString());
         }
-        catch(const std::exception &e)
+        catch(const std::runtime_error &e)
         {
             qDebug() << e.what();
             continue;
