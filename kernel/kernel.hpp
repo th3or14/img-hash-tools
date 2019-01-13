@@ -27,7 +27,7 @@ class AHashHandler : public HashHandlerBase
 {
 public:
     explicit AHashHandler(const std::function<bool(double)> &thresholding_predicate =
-            [](const double hashes_diff)
+            [](double hashes_diff)
     {
         return hashes_diff <= 15;
     });
@@ -37,7 +37,7 @@ class PHashHandler : public HashHandlerBase
 {
 public:
     explicit PHashHandler(const std::function<bool(double)> &thresholding_predicate =
-            [](const double hashes_diff)
+            [](double hashes_diff)
     {
         return hashes_diff <= 15;
     });
@@ -47,7 +47,7 @@ class CHashHandler : public HashHandlerBase
 {
 public:
     explicit CHashHandler(const std::function<bool(double)> &thresholding_predicate =
-            [](const double hashes_diff)
+            [](double hashes_diff)
     {
         return hashes_diff <= 5.5;
     });
@@ -57,7 +57,7 @@ class RHashHandler : public HashHandlerBase
 {
 public:
     explicit RHashHandler(const std::function<bool(double)> &thresholding_predicate =
-            [](const double hashes_diff)
+            [](double hashes_diff)
     {
         // yes, >= here
         return hashes_diff >= 0.708;

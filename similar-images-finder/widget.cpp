@@ -4,7 +4,7 @@
 ImageData::ImageData(const cv::Mat &hash, const QString &filename) :
     hash(hash), filename(filename) {}
 
-QString format_file_size(const qlonglong bytes)
+QString format_file_size(qlonglong bytes)
 {
     const QString b = QString("%L1").arg(bytes, -1, 'f', 0, ' ') + " bytes";
     const double kb = static_cast<double>(bytes) / 1000;
@@ -21,7 +21,7 @@ QImage get_image_icon(const QString &image_name)
     return QImage(image_name).scaled(QSize(32, 32), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
-size_t get_files_cnt(const std::unique_ptr<QDirIterator> dir_it)
+size_t get_files_cnt(std::unique_ptr<QDirIterator> dir_it)
 {
     size_t files_cnt = 0;
     while (dir_it->hasNext())
@@ -35,7 +35,7 @@ size_t get_files_cnt(const std::unique_ptr<QDirIterator> dir_it)
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget),
-    hash_handler([](const double hashes_diff)
+    hash_handler([](double hashes_diff)
     {
         return hashes_diff <= 5;
     })
@@ -106,7 +106,7 @@ void Widget::update_info()
     ui->info->setText(get_current_item_info());
 }
 
-void Widget::update_progress_bar(const double current, const double total)
+void Widget::update_progress_bar(double current, double total)
 {
     ui->progress->setValue(current / total * 100);
 }
@@ -215,8 +215,8 @@ void Widget::build_similarities_list(
     build_similarities_list(similarity_clusters);
 }
 
-void Widget::resize_relative_to_screen_size(const double width_multiplier,
-                                            const double height_multiplier)
+void Widget::resize_relative_to_screen_size(double width_multiplier,
+                                            double height_multiplier)
 {
     const QSize screen_size = qApp->screens()[0]->size();
     resize(screen_size.width() * width_multiplier, screen_size.height() * height_multiplier);

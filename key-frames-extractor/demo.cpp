@@ -99,7 +99,7 @@ void DemoVideo::extract_key_frames()
 
 PercentPrinter::PercentPrinter() : displayed_percent(-1) {}
 
-void PercentPrinter::print_if_percent_changed(const double current, const double total,
+void PercentPrinter::print_if_percent_changed(double current, double total,
                                               const std::string &prefix,
                                               const std::string &postfix)
 {
@@ -111,7 +111,7 @@ void PercentPrinter::print_if_percent_changed(const double current, const double
     }
 }
 
-void check_argc(const int argc_given, const int argc_expected)
+void check_argc(int argc_given, int argc_expected)
 {
     if (argc_given != argc_expected)
     {
