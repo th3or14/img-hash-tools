@@ -116,9 +116,9 @@ void Widget::on_location_textChanged()
     ui->scan->setEnabled(!ui->location->text().isEmpty() && QDir(ui->location->text()).exists());
 }
 
-std::vector<std::unique_ptr<ImageData>> Widget::get_hashes_pool()
+HashesPool Widget::get_hashes_pool()
 {
-    std::vector<std::unique_ptr<ImageData>> hashes_pool;
+    HashesPool hashes_pool;
     const std::function<std::unique_ptr<QDirIterator>()> init_dir_it =
             [path = ui->location->text()]()
     {
@@ -153,10 +153,9 @@ std::vector<std::unique_ptr<ImageData>> Widget::get_hashes_pool()
     return hashes_pool;
 }
 
-std::vector<std::vector<std::unique_ptr<ImageData>>> Widget::get_similarity_clusters(
-        std::vector<std::unique_ptr<ImageData>> &hashes_pool)
+std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &hashes_pool)
 {
-    std::vector<std::vector<std::unique_ptr<ImageData>>> similarity_clusters;
+    std::vector<SimilarityCluster> similarity_clusters;
     ui->progress->setFormat("Building similarity clusters (stage 2 of 3)... %p%");
     ui->progress->setValue(0);
     for (size_t i = 0; i < hashes_pool.size(); i++)
@@ -164,31 +163,29 @@ std::vector<std::vector<std::unique_ptr<ImageData>>> Widget::get_similarity_clus
         emit progress_state_changed(i + 1, hashes_pool.size());
         if (hashes_pool[i] == nullptr)
             continue;
-        std::vector<std::unique_ptr<ImageData>> similar_images;
+        SimilarityCluster similarity_cluster;
         for (size_t j = i + 1; j < hashes_pool.size(); j++)
         {
             if (hashes_pool[j] == nullptr)
                 continue;
             if (hash_handler.compare(hashes_pool[i]->hash, hashes_pool[j]->hash))
-                similar_images.push_back(std::move(hashes_pool[j]));
+                similarity_cluster.push_back(std::move(hashes_pool[j]));
         }
-        if (!similar_images.empty())
+        if (!similarity_cluster.empty())
         {
-            similar_images.push_back(std::move(hashes_pool[i]));
-            similarity_clusters.push_back(std::move(similar_images));
+            similarity_cluster.push_back(std::move(hashes_pool[i]));
+            similarity_clusters.push_back(std::move(similarity_cluster));
         }
     }
     return similarity_clusters;
 }
 
-std::vector<std::vector<std::unique_ptr<ImageData>>> Widget::get_similarity_clusters(
-        std::vector<std::unique_ptr<ImageData>> &&hashes_pool)
+std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &&hashes_pool)
 {
     return get_similarity_clusters(hashes_pool);
 }
 
-void Widget::build_similarities_list(
-        const std::vector<std::vector<std::unique_ptr<ImageData>>> &similarity_clusters)
+void Widget::build_similarities_list(const std::vector<SimilarityCluster> &similarity_clusters)
 {
     ui->progress->setFormat("Building similarities list (stage 3 of 3)... %p%");
     ui->progress->setValue(0);
@@ -209,8 +206,7 @@ void Widget::build_similarities_list(
     ui->progress->setValue(0);
 }
 
-void Widget::build_similarities_list(
-        std::vector<std::vector<std::unique_ptr<ImageData>>> &&similarity_clusters)
+void Widget::build_similarities_list(std::vector<SimilarityCluster> &&similarity_clusters)
 {
     build_similarities_list(similarity_clusters);
 }

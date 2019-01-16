@@ -31,6 +31,8 @@ QImage get_image_icon(const QString &image_name);
 
 size_t get_files_cnt(std::unique_ptr<QDirIterator> dir_it);
 
+typedef std::vector<std::unique_ptr<ImageData>> HashesPool, SimilarityCluster;
+
 class Widget : public QWidget
 {
     Q_OBJECT
@@ -51,15 +53,11 @@ private slots:
     void on_location_textChanged();
 
 private:
-    std::vector<std::unique_ptr<ImageData>> get_hashes_pool();
-    std::vector<std::vector<std::unique_ptr<ImageData>>> get_similarity_clusters(
-            std::vector<std::unique_ptr<ImageData>> &images_pool);
-    std::vector<std::vector<std::unique_ptr<ImageData>>> get_similarity_clusters(
-            std::vector<std::unique_ptr<ImageData>> &&images_pool);
-    void build_similarities_list(
-            const std::vector<std::vector<std::unique_ptr<ImageData>>> &similarity_clusters);
-    void build_similarities_list(
-            std::vector<std::vector<std::unique_ptr<ImageData>>> &&similarity_clusters);
+    HashesPool get_hashes_pool();
+    std::vector<SimilarityCluster> get_similarity_clusters(HashesPool &hashes_pool);
+    std::vector<SimilarityCluster> get_similarity_clusters(HashesPool &&hashes_pool);
+    void build_similarities_list(const std::vector<SimilarityCluster> &similarity_clusters);
+    void build_similarities_list(std::vector<SimilarityCluster> &&similarity_clusters);
     void resize_relative_to_screen_size(double width_multiplier, double height_multiplier);
     void remove_adjucent_blank_items();
     QImage get_current_item_thumbnail() const;
