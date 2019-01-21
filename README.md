@@ -8,9 +8,7 @@ Converts an input video into a serie of key frames for easier browsing.
   <img src="https://user-images.githubusercontent.com/37025359/45453867-ba5c1700-b6ea-11e8-9cae-2847bc745f14.jpg">
 </p>
 
-Usage:
-
-```./key-frames-extractor <input video filename> <output location>```
+Usage: `./key-frames-extractor <input video filename> <output location>`
 
 #### Similar images finder
 
