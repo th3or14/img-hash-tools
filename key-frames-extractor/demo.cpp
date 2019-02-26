@@ -45,7 +45,7 @@ DemoVideo::DemoVideo(const std::string &input_video_filename, const std::string 
 void DemoVideo::locate_key_frames()
 {
     try_open_video(cap, input_video_filename);
-    const size_t frames_cnt = cap.get(CV_CAP_PROP_FRAME_COUNT);
+    size_t frames_cnt = cap.get(CV_CAP_PROP_FRAME_COUNT);
     std::cout << "Found " << frames_cnt << " frames to process.\n";
     KeyFramesExtractor extractor;
     PercentPrinter printer;
@@ -73,7 +73,7 @@ void DemoVideo::extract_key_frames()
     if (key_frame_nums->empty())
         throw std::logic_error("Error: no key frames found.");
     try_open_video(cap, input_video_filename);
-    std::vector<size_t>::const_iterator key_frame_num_it = key_frame_nums->begin();
+    std::vector<size_t>::iterator key_frame_num_it = key_frame_nums->begin();
     PercentPrinter printer;
     for (size_t curr_frame_num = 0; curr_frame_num < key_frame_nums->back() + 1; curr_frame_num++)
     {
@@ -103,7 +103,7 @@ void PercentPrinter::print_if_percent_changed(double current, double total,
                                               const std::string &prefix,
                                               const std::string &postfix)
 {
-    const int actual_percent = current / total * 100;
+    int actual_percent = current / total * 100;
     if (actual_percent != displayed_percent)
     {
         std::cout << prefix << actual_percent << postfix << std::flush;
@@ -115,7 +115,7 @@ void check_argc(int argc_given, int argc_expected)
 {
     if (argc_given != argc_expected)
     {
-        const std::string err_msg = "Wrong number of arguments (given " +
+        std::string err_msg = "Wrong number of arguments (given " +
                 std::to_string(argc_given - 1) + ", expected " +
                 std::to_string(argc_expected - 1) + ").";
         throw std::runtime_error(err_msg);

@@ -6,11 +6,11 @@ ImageData::ImageData(const cv::Mat &hash, const QString &filename) :
 
 QString format_file_size(qlonglong bytes)
 {
-    const QString b = QString("%L1").arg(bytes, -1, 'f', 0, ' ') + " bytes";
-    const double kb = static_cast<double>(bytes) / 1000;
+    QString b = QString("%L1").arg(bytes, -1, 'f', 0, ' ') + " bytes";
+    double kb = static_cast<double>(bytes) / 1000;
     if (kb < 1.)
         return b;
-    const double mb = kb / 1000;
+    double mb = kb / 1000;
     if (mb < 1.)
         return QString::number(kb, 'f', 1) + " kB (" + b + ")";
     return QString::number(mb, 'f', 1) + " MB (" + b + ")";
@@ -119,7 +119,7 @@ void Widget::on_location_textChanged()
 HashesPool Widget::get_hashes_pool()
 {
     HashesPool hashes_pool;
-    const std::function<std::unique_ptr<QDirIterator>()> init_dir_it =
+    std::function<std::unique_ptr<QDirIterator>()> init_dir_it =
             [path = ui->location->text()]()
     {
         return std::make_unique<QDirIterator>(path,
@@ -127,8 +127,8 @@ HashesPool Widget::get_hashes_pool()
                                               << "*.tiff" << "*.tif", QDir::Files,
                                               QDirIterator::Subdirectories);
     };
-    const size_t files_cnt = get_files_cnt(init_dir_it());
-    const std::unique_ptr<QDirIterator> dir_it = init_dir_it();
+    size_t files_cnt = get_files_cnt(init_dir_it());
+    std::unique_ptr<QDirIterator> dir_it = init_dir_it();
     ui->progress->setFormat("Building hashes pool (stage 1 of 3)... %p%");
     ui->progress->setValue(0);
     for (size_t files_scanned = 0; dir_it->hasNext(); files_scanned++)
@@ -214,7 +214,7 @@ void Widget::build_similarities_list(std::vector<SimilarityCluster> &&similarity
 void Widget::resize_relative_to_screen_size(double width_multiplier,
                                             double height_multiplier)
 {
-    const QSize screen_size = qApp->screens()[0]->size();
+    QSize screen_size = qApp->screens()[0]->size();
     resize(screen_size.width() * width_multiplier, screen_size.height() * height_multiplier);
 }
 
@@ -236,8 +236,8 @@ QImage Widget::get_current_item_thumbnail() const
 
 QString Widget::get_current_item_info() const
 {
-    const QFileInfo file_info(ui->list->currentItem()->text());
-    const QString info_string = "File path: " + file_info.absoluteFilePath() + "\n" +
+    QFileInfo file_info(ui->list->currentItem()->text());
+    QString info_string = "File path: " + file_info.absoluteFilePath() + "\n" +
             "Size: " + format_file_size(file_info.size()) + "\n" +
             "Created: " + file_info.created().toString() + "\n" +
             "Last modified: " + file_info.lastModified().toString();
