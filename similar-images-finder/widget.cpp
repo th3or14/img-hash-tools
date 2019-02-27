@@ -27,7 +27,7 @@ size_t get_files_cnt(std::unique_ptr<QDirIterator> dir_it)
     while (dir_it->hasNext())
     {
         dir_it->next();
-        files_cnt++;
+        ++files_cnt;
     }
     return files_cnt;
 }
@@ -72,7 +72,7 @@ void Widget::on_scan_clicked()
 void Widget::on_remove_clicked()
 {
     std::vector<QListWidgetItem *> items_to_remove;
-    for (int i = 0; i < ui->list->count(); i++)
+    for (int i = 0; i < ui->list->count(); ++i)
     {
         QListWidgetItem *item = ui->list->item(i);
         if ((item->flags() & Qt::ItemIsEnabled) == 0)
@@ -131,7 +131,7 @@ HashesPool Widget::get_hashes_pool()
     std::unique_ptr<QDirIterator> dir_it = init_dir_it();
     ui->progress->setFormat("Building hashes pool (stage 1 of 3)... %p%");
     ui->progress->setValue(0);
-    for (size_t files_scanned = 0; dir_it->hasNext(); files_scanned++)
+    for (size_t files_scanned = 0; dir_it->hasNext(); ++files_scanned)
     {
         emit progress_state_changed(files_scanned + 1, files_cnt);
         dir_it->next();
@@ -158,13 +158,13 @@ std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &hashe
     std::vector<SimilarityCluster> similarity_clusters;
     ui->progress->setFormat("Building similarity clusters (stage 2 of 3)... %p%");
     ui->progress->setValue(0);
-    for (size_t i = 0; i < hashes_pool.size(); i++)
+    for (size_t i = 0; i < hashes_pool.size(); ++i)
     {
         emit progress_state_changed(i + 1, hashes_pool.size());
         if (hashes_pool[i] == nullptr)
             continue;
         SimilarityCluster similarity_cluster;
-        for (size_t j = i + 1; j < hashes_pool.size(); j++)
+        for (size_t j = i + 1; j < hashes_pool.size(); ++j)
         {
             if (hashes_pool[j] == nullptr)
                 continue;
@@ -189,7 +189,7 @@ void Widget::build_similarities_list(const std::vector<SimilarityCluster> &simil
 {
     ui->progress->setFormat("Building similarities list (stage 3 of 3)... %p%");
     ui->progress->setValue(0);
-    for (size_t i = 0; i < similarity_clusters.size(); i++)
+    for (size_t i = 0; i < similarity_clusters.size(); ++i)
     {
         emit progress_state_changed(i + 1, similarity_clusters.size());
         insert_blank_item();
@@ -220,7 +220,7 @@ void Widget::resize_relative_to_screen_size(double width_multiplier,
 
 void Widget::remove_adjucent_blank_items()
 {
-    for (int i = 1; i < ui->list->count(); i++)
+    for (int i = 1; i < ui->list->count(); ++i)
         if (ui->list->item(i - 1)->text().isEmpty() && ui->list->item(i)->text().isEmpty())
         {
             delete ui->list->item(i - 1);

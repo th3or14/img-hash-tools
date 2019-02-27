@@ -49,7 +49,7 @@ void DemoVideo::locate_key_frames()
     std::cout << "Found " << frames_cnt << " frames to process.\n";
     KeyFramesExtractor extractor;
     PercentPrinter printer;
-    for (size_t i = 0; i < frames_cnt; i++)
+    for (size_t i = 0; i < frames_cnt; ++i)
     {
         if (!cap.grab())
         {
@@ -75,7 +75,7 @@ void DemoVideo::extract_key_frames()
     try_open_video(cap, input_video_filename);
     std::vector<size_t>::iterator key_frame_num_it = key_frame_nums->begin();
     PercentPrinter printer;
-    for (size_t curr_frame_num = 0; curr_frame_num < key_frame_nums->back() + 1; curr_frame_num++)
+    for (size_t curr_frame_num = 0; curr_frame_num < key_frame_nums->back() + 1; ++curr_frame_num)
     {
         if (!cap.grab())
             throw std::logic_error("Error: reached end of video before end of extraction.");

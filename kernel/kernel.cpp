@@ -44,7 +44,7 @@ bool CombinedHashHandler::eval_comparison(CombinedHash &a, CombinedHash &b)
         throw std::logic_error("Evaluating comparison is forbidden: empty image.");
     a.hashes.resize(handlers.size());
     b.hashes.resize(handlers.size());
-    for (size_t i = 0; i < handlers.size(); i++)
+    for (size_t i = 0; i < handlers.size(); ++i)
     {
         if (a.hashes[i].empty())
             a.hashes[i] = handlers[i]->compute(a.img);
@@ -66,7 +66,7 @@ void KeyFramesExtractor::process_next(const cv::Mat &frame)
         resolve_cluster();
     prev_hash = std::move(curr_hash);
     equal_frame_nums_cluster.push_back(curr_frame_num);
-    curr_frame_num++;
+    ++curr_frame_num;
 }
 
 void KeyFramesExtractor::finish_processing()
