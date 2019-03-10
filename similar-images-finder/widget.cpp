@@ -1,10 +1,17 @@
 #include "widget.hpp"
 #include "ui_widget.h"
 
+struct ImageData
+{
+    cv::Mat hash;
+    QString filename;
+    ImageData(const cv::Mat &hash, const QString &filename);
+};
+
 ImageData::ImageData(const cv::Mat &hash, const QString &filename) :
     hash(hash), filename(filename) {}
 
-QString format_file_size(qlonglong bytes)
+static QString format_file_size(qlonglong bytes)
 {
     QString b = QString("%L1").arg(bytes, -1, 'f', 0, ' ') + " bytes";
     double kb = static_cast<double>(bytes) / 1000;
@@ -16,12 +23,12 @@ QString format_file_size(qlonglong bytes)
     return QString::number(mb, 'f', 1) + " MB (" + b + ")";
 }
 
-QImage get_image_icon(const QString &image_name)
+static QImage get_image_icon(const QString &image_name)
 {
     return QImage(image_name).scaled(QSize(32, 32), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
-size_t get_files_cnt(std::unique_ptr<QDirIterator> dir_it)
+static size_t get_files_cnt(std::unique_ptr<QDirIterator> dir_it)
 {
     size_t files_cnt = 0;
     while (dir_it->hasNext())
@@ -249,9 +256,4 @@ void Widget::insert_blank_item()
     QListWidgetItem *blank_item = new QListWidgetItem;
     blank_item->setFlags(Qt::NoItemFlags);
     ui->list->insertItem(0, blank_item);
-}
-
-void redirect_stderr_to_log()
-{
-    stderr = freopen("log.txt", "w", stderr);
 }

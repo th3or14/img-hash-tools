@@ -1,24 +1,36 @@
 #include "demo.hpp"
 
-void check_file_exists(const std::string &path)
+class PercentPrinter
+{
+public:
+    PercentPrinter();
+    void print_if_percent_changed(double current, double total,
+                                  const std::string &prefix = "",
+                                  const std::string &postfix = "");
+
+private:
+    int displayed_percent;
+};
+
+static void check_file_exists(const std::string &path)
 {
     if (!QFile(QString::fromStdString(path)).exists())
         throw std::runtime_error("File '" + path + "' does not exist.");
 }
 
-void check_directory_exists(const std::string &path)
+static void check_directory_exists(const std::string &path)
 {
     if (!QDir(QString::fromStdString(path)).exists())
         throw std::runtime_error("Directory '" + path + "' does not exist.");
 }
 
-void try_create_directory(const std::string &path)
+static void try_create_directory(const std::string &path)
 {
     if (!QDir().mkdir(QString::fromStdString(path)))
         throw std::runtime_error("Unable to create directory '" + path + "'.");
 }
 
-void try_open_video(cv::VideoCapture &vc, const std::string &path)
+static void try_open_video(cv::VideoCapture &vc, const std::string &path)
 {
     if (!vc.open(path))
         throw std::runtime_error("Unable to open '" + path +
@@ -108,16 +120,5 @@ void PercentPrinter::print_if_percent_changed(double current, double total,
     {
         std::cout << prefix << actual_percent << postfix << std::flush;
         displayed_percent = actual_percent;
-    }
-}
-
-void check_argc(int argc_given, int argc_expected)
-{
-    if (argc_given != argc_expected)
-    {
-        std::string err_msg = "Wrong number of arguments (given " +
-                std::to_string(argc_given - 1) + ", expected " +
-                std::to_string(argc_expected - 1) + ").";
-        throw std::runtime_error(err_msg);
     }
 }

@@ -4,7 +4,7 @@
 
 int main(int argc, char *argv[])
 {
-    redirect_stderr_to_log();
+    stderr = freopen("log.txt", "w", stderr);
     QApplication a(argc, argv);
     Widget w;
     w.show();

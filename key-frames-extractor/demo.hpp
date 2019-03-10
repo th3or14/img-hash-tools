@@ -8,14 +8,6 @@
 #include <QTime>
 #include <QDir>
 
-void check_file_exists(const std::string &path);
-
-void check_directory_exists(const std::string &path);
-
-void try_create_directory(const std::string &path);
-
-void try_open_video(cv::VideoCapture &vc, const std::string &path);
-
 class DemoVideo
 {
 public:
@@ -34,19 +26,5 @@ private:
     cv::VideoCapture cap;
     std::unique_ptr<std::vector<size_t>> key_frame_nums;
 };
-
-class PercentPrinter
-{
-public:
-    PercentPrinter();
-    void print_if_percent_changed(double current, double total,
-                                  const std::string &prefix = "",
-                                  const std::string &postfix = "");
-
-private:
-    int displayed_percent;
-};
-
-void check_argc(int argc_given, int argc_expected);
 
 #endif // DEMO_HPP

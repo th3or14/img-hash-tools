@@ -18,18 +18,7 @@ namespace Ui {
 class Widget;
 }
 
-struct ImageData
-{
-    cv::Mat hash;
-    QString filename;
-    ImageData(const cv::Mat &hash, const QString &filename);
-};
-
-QString format_file_size(qlonglong bytes);
-
-QImage get_image_icon(const QString &image_name);
-
-size_t get_files_cnt(std::unique_ptr<QDirIterator> dir_it);
+struct ImageData;
 
 typedef std::vector<std::unique_ptr<ImageData>> HashesPool, SimilarityCluster;
 
@@ -67,7 +56,5 @@ private:
     Ui::Widget *ui;
     PHashHandler hash_handler;
 };
-
-void redirect_stderr_to_log();
 
 #endif // WIDGET_HPP
