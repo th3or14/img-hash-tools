@@ -1,5 +1,7 @@
 #include "demo.hpp"
 
+namespace {
+
 class PercentPrinter
 {
 public:
@@ -11,6 +13,8 @@ public:
 private:
     int displayed_percent;
 };
+
+} // namespace
 
 static void check_file_exists(const std::string &path)
 {
