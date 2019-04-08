@@ -231,7 +231,7 @@ void Widget::remove_adjucent_blank_items()
         if (ui->list->item(i - 1)->text().isEmpty() && ui->list->item(i)->text().isEmpty())
         {
             delete ui->list->item(i - 1);
-            i--;
+            --i;
         }
 }
 
