@@ -62,7 +62,7 @@ Widget::~Widget()
 
 void Widget::on_browse_clicked()
 {
-    ui->location->setText(QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+    ui->location->setText(QFileDialog::getExistingDirectory(this, "Open Directory",
                                                             ui->location->text(),
                                                             QFileDialog::ShowDirsOnly |
                                                             QFileDialog::DontResolveSymlinks));
