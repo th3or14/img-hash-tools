@@ -49,10 +49,8 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
     resize_relative_to_screen_size(0.8, 0.8);
-    connect(ui->list, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),
-            this, SLOT(update_info()));
     connect(this, SIGNAL(progress_state_changed(double, double)),
-            this, SLOT(update_progress_bar(double, double)));
+            this, SLOT(on_progress_state_changed(double, double)));
 }
 
 Widget::~Widget()
@@ -105,7 +103,7 @@ void Widget::on_remove_clicked()
     remove_adjucent_blank_items();
 }
 
-void Widget::update_info()
+void Widget::on_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *)
 {
     if (ui->list->currentRow() == -1)
         return;
@@ -115,7 +113,7 @@ void Widget::update_info()
     ui->info->setText(get_current_item_info());
 }
 
-void Widget::update_progress_bar(double current, double total)
+void Widget::on_progress_state_changed(double current, double total)
 {
     ui->progress->setValue(current / total * 100);
 }

@@ -37,8 +37,8 @@ private slots:
     void on_browse_clicked();
     void on_scan_clicked();
     void on_remove_clicked();
-    void update_info();
-    void update_progress_bar(double current, double total);
+    void on_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *);
+    void on_progress_state_changed(double current, double total);
     void on_location_textChanged();
 
 private:
