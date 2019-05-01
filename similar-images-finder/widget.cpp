@@ -49,8 +49,18 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
     resize_relative_to_screen_size(0.8, 0.8);
-    connect(this, SIGNAL(progress_state_changed(double, double)),
-            this, SLOT(on_progress_state_changed(double, double)));
+    connect(ui->browse, &QPushButton::clicked,
+            this, &Widget::slot_browse_clicked);
+    connect(ui->scan, &QPushButton::clicked,
+            this, &Widget::slot_scan_clicked);
+    connect(ui->remove, &QPushButton::clicked,
+            this, &Widget::slot_remove_clicked);
+    connect(ui->list, &QListWidget::currentItemChanged,
+            this, &Widget::slot_list_currentItemChanged);
+    connect(this, &Widget::signal_progress_state_changed,
+            this, &Widget::slot_progress_state_changed);
+    connect(ui->location, &QLineEdit::textChanged,
+            this, &Widget::slot_location_textChanged);
 }
 
 Widget::~Widget()
@@ -58,7 +68,7 @@ Widget::~Widget()
     delete ui;
 }
 
-void Widget::on_browse_clicked()
+void Widget::slot_browse_clicked()
 {
     QString directory = QFileDialog::getExistingDirectory(this, "Open Directory",
                                                           ui->location->text(),
@@ -68,7 +78,7 @@ void Widget::on_browse_clicked()
         ui->location->setText(directory);
 }
 
-void Widget::on_scan_clicked()
+void Widget::slot_scan_clicked()
 {
     ui->list->clear();
     ui->image->clear();
@@ -76,7 +86,7 @@ void Widget::on_scan_clicked()
     build_similarities_list(get_similarity_clusters(get_hashes_pool()));
 }
 
-void Widget::on_remove_clicked()
+void Widget::slot_remove_clicked()
 {
     std::vector<QListWidgetItem *> items_to_remove;
     for (int i = 0; i < ui->list->count(); ++i)
@@ -103,7 +113,7 @@ void Widget::on_remove_clicked()
     remove_adjucent_blank_items();
 }
 
-void Widget::on_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *)
+void Widget::slot_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *)
 {
     if (ui->list->currentRow() == -1)
         return;
@@ -113,12 +123,12 @@ void Widget::on_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *)
     ui->info->setText(get_current_item_info());
 }
 
-void Widget::on_progress_state_changed(double current, double total)
+void Widget::slot_progress_state_changed(double current, double total)
 {
     ui->progress->setValue(current / total * 100);
 }
 
-void Widget::on_location_textChanged()
+void Widget::slot_location_textChanged()
 {
     ui->scan->setEnabled(!ui->location->text().isEmpty() && QDir(ui->location->text()).exists());
 }
@@ -140,7 +150,7 @@ HashesPool Widget::get_hashes_pool()
     ui->progress->setValue(0);
     for (size_t files_scanned = 0; dir_it->hasNext(); ++files_scanned)
     {
-        emit progress_state_changed(files_scanned + 1, files_cnt);
+        emit signal_progress_state_changed(files_scanned + 1, files_cnt);
         dir_it->next();
         cv::Mat img;
         try
@@ -167,7 +177,7 @@ std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &hashe
     ui->progress->setValue(0);
     for (size_t i = 0; i < hashes_pool.size(); ++i)
     {
-        emit progress_state_changed(i + 1, hashes_pool.size());
+        emit signal_progress_state_changed(i + 1, hashes_pool.size());
         if (hashes_pool[i] == nullptr)
             continue;
         SimilarityCluster similarity_cluster;
@@ -198,7 +208,7 @@ void Widget::build_similarities_list(const std::vector<SimilarityCluster> &simil
     ui->progress->setValue(0);
     for (size_t i = 0; i < similarity_clusters.size(); ++i)
     {
-        emit progress_state_changed(i + 1, similarity_clusters.size());
+        emit signal_progress_state_changed(i + 1, similarity_clusters.size());
         insert_blank_item();
         for (const auto &image_data : similarity_clusters[i])
         {

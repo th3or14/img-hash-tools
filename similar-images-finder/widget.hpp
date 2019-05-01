@@ -31,15 +31,15 @@ public:
     ~Widget();
 
 signals:
-    void progress_state_changed(double current, double total);
+    void signal_progress_state_changed(double current, double total);
 
 private slots:
-    void on_browse_clicked();
-    void on_scan_clicked();
-    void on_remove_clicked();
-    void on_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *);
-    void on_progress_state_changed(double current, double total);
-    void on_location_textChanged();
+    void slot_browse_clicked();
+    void slot_scan_clicked();
+    void slot_remove_clicked();
+    void slot_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *);
+    void slot_progress_state_changed(double current, double total);
+    void slot_location_textChanged();
 
 private:
     HashesPool get_hashes_pool();
