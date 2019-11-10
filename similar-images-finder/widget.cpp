@@ -170,7 +170,7 @@ HashesPool Widget::get_hashes_pool()
     return hashes_pool;
 }
 
-std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &hashes_pool)
+std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &&hashes_pool)
 {
     std::vector<SimilarityCluster> similarity_clusters;
     ui->progress->setFormat("Building similarity clusters (stage 2 of 3)... %p%");
@@ -197,11 +197,6 @@ std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &hashe
     return similarity_clusters;
 }
 
-std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &&hashes_pool)
-{
-    return get_similarity_clusters(hashes_pool);
-}
-
 void Widget::build_similarities_list(const std::vector<SimilarityCluster> &similarity_clusters)
 {
     ui->progress->setFormat("Building similarities list (stage 3 of 3)... %p%");
@@ -221,11 +216,6 @@ void Widget::build_similarities_list(const std::vector<SimilarityCluster> &simil
     }
     ui->progress->setFormat("");
     ui->progress->setValue(0);
-}
-
-void Widget::build_similarities_list(std::vector<SimilarityCluster> &&similarity_clusters)
-{
-    build_similarities_list(similarity_clusters);
 }
 
 void Widget::resize_relative_to_screen_size(double width_multiplier,
