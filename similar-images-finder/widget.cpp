@@ -136,7 +136,7 @@ void Widget::slot_location_textChanged()
 HashesPool Widget::get_hashes_pool()
 {
     HashesPool hashes_pool;
-    std::function<std::unique_ptr<QDirIterator>()> init_dir_it =
+    auto init_dir_it =
             [path = ui->location->text()]() -> std::unique_ptr<QDirIterator>
     {
         return std::make_unique<QDirIterator>(path,
