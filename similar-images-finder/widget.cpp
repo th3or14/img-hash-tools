@@ -42,7 +42,7 @@ static size_t get_files_cnt(std::unique_ptr<QDirIterator> dir_it)
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget),
-    hash_handler([](double hashes_diff)
+    hash_handler([](double hashes_diff) -> bool
     {
         return hashes_diff <= 5;
     })
