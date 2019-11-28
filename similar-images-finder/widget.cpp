@@ -104,7 +104,7 @@ void Widget::slot_remove_clicked()
                               "Are you sure you want to proceed?",
                               QMessageBox::Yes | QMessageBox::No) == QMessageBox::No)
         return;
-    for (const auto &item : items_to_remove)
+    for (QListWidgetItem *item : items_to_remove)
     {
         QFile(item->text()).remove();
         qDebug() << "Removed" << item->text();
@@ -205,7 +205,7 @@ void Widget::build_similarities_list(const std::vector<SimilarityCluster> &simil
     {
         emit signal_progress_state_changed(i + 1, similarity_clusters.size());
         insert_blank_item();
-        for (const auto &image_data : similarity_clusters[i])
+        for (const std::unique_ptr<ImageData> &image_data : similarity_clusters[i])
         {
             QListWidgetItem *item = new QListWidgetItem;
             item->setIcon(QIcon(QPixmap::fromImage(get_image_icon(image_data->filename))));
