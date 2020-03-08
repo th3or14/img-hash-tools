@@ -46,11 +46,11 @@ bool CombinedHashHandler::eval_comparison(CombinedHash &a, CombinedHash &b)
     b.hashes.resize(handlers.size());
     for (size_t i = 0; i < handlers.size(); ++i)
     {
-        if (a.hashes[i].empty())
-            a.hashes[i] = handlers[i]->compute(a.img);
-        if (b.hashes[i].empty())
-            b.hashes[i] = handlers[i]->compute(b.img);
-        if (handlers[i]->compare(a.hashes[i], b.hashes[i]))
+        if (a.hashes.at(i).empty())
+            a.hashes.at(i) = handlers.at(i)->compute(a.img);
+        if (b.hashes.at(i).empty())
+            b.hashes.at(i) = handlers.at(i)->compute(b.img);
+        if (handlers.at(i)->compare(a.hashes.at(i), b.hashes.at(i)))
             return true;
     }
     return false;
@@ -85,6 +85,6 @@ void KeyFramesExtractor::resolve_cluster()
 {
     if (equal_frame_nums_cluster.empty())
         throw std::logic_error("Resolving cluster is forbidden: cluster is empty.");
-    key_frame_nums->push_back(equal_frame_nums_cluster[equal_frame_nums_cluster.size() / 2]);
+    key_frame_nums->push_back(equal_frame_nums_cluster.at(equal_frame_nums_cluster.size() / 2));
     equal_frame_nums_cluster.clear();
 }
