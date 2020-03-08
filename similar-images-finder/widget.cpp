@@ -178,19 +178,19 @@ std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &&hash
     for (size_t i = 0; i < hashes_pool.size(); ++i)
     {
         emit signal_progress_state_changed(i + 1, hashes_pool.size());
-        if (hashes_pool[i] == nullptr)
+        if (hashes_pool.at(i) == nullptr)
             continue;
         SimilarityCluster similarity_cluster;
         for (size_t j = i + 1; j < hashes_pool.size(); ++j)
         {
-            if (hashes_pool[j] == nullptr)
+            if (hashes_pool.at(j) == nullptr)
                 continue;
-            if (hash_handler.compare(hashes_pool[i]->hash, hashes_pool[j]->hash))
-                similarity_cluster.push_back(std::move(hashes_pool[j]));
+            if (hash_handler.compare(hashes_pool.at(i)->hash, hashes_pool.at(j)->hash))
+                similarity_cluster.push_back(std::move(hashes_pool.at(j)));
         }
         if (!similarity_cluster.empty())
         {
-            similarity_cluster.push_back(std::move(hashes_pool[i]));
+            similarity_cluster.push_back(std::move(hashes_pool.at(i)));
             similarity_clusters.push_back(std::move(similarity_cluster));
         }
     }
@@ -205,7 +205,7 @@ void Widget::build_similarities_list(const std::vector<SimilarityCluster> &simil
     {
         emit signal_progress_state_changed(i + 1, similarity_clusters.size());
         insert_blank_item();
-        for (const auto &image_data : similarity_clusters[i])
+        for (const auto &image_data : similarity_clusters.at(i))
         {
             QListWidgetItem *item = new QListWidgetItem;
             item->setIcon(QIcon(QPixmap::fromImage(get_image_icon(image_data->filename))));
@@ -221,7 +221,7 @@ void Widget::build_similarities_list(const std::vector<SimilarityCluster> &simil
 void Widget::resize_relative_to_screen_size(double width_multiplier,
                                             double height_multiplier)
 {
-    QSize screen_size = qApp->screens()[0]->size();
+    QSize screen_size = qApp->screens().at(0)->size();
     resize(screen_size.width() * width_multiplier, screen_size.height() * height_multiplier);
 }
 
