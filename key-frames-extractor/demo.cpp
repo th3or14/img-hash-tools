@@ -61,7 +61,7 @@ DemoVideo::DemoVideo(const std::string &input_video_filename, const std::string 
 void DemoVideo::locate_key_frames()
 {
     try_open_video(cap, input_video_filename);
-    size_t frames_cnt = cap.get(CV_CAP_PROP_FRAME_COUNT);
+    size_t frames_cnt = cap.get(cv::CAP_PROP_FRAME_COUNT);
     std::cout << "Found " << frames_cnt << " frames to process.\n";
     KeyFramesExtractor extractor;
     PercentPrinter printer;
@@ -102,7 +102,7 @@ void DemoVideo::extract_key_frames()
             cv::Mat curr_frame;
             cap.retrieve(curr_frame);
             cv::imwrite(key_frames_directory + "/" + QTime::fromMSecsSinceStartOfDay(
-                            cap.get(CV_CAP_PROP_POS_MSEC)).toString(
+                            cap.get(cv::CAP_PROP_POS_MSEC)).toString(
                             timestamp_format).toStdString() + ".jpg", curr_frame);
             ++key_frame_num_it;
         }

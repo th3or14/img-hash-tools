@@ -246,7 +246,7 @@ QString Widget::get_current_item_info() const
     QFileInfo file_info(ui->list->currentItem()->text());
     QString info_string = "File path: " + file_info.absoluteFilePath() + "\n" +
             "Size: " + format_file_size(file_info.size()) + "\n" +
-            "Created: " + file_info.created().toString() + "\n" +
+            "Created: " + file_info.birthTime().toString() + "\n" +
             "Last modified: " + file_info.lastModified().toString();
     return info_string;
 }
