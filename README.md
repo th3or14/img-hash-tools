@@ -20,16 +20,10 @@ Helps to remove duplicates and almost duplicates from a specified pictures colle
 
 ## Requirements
 
-* CMake (checked version 3.5.1)
+* CMake (checked version 3.10.2)
 
-* A C++14 compliant compiler (checked GCC 5.4.0)
+* A C++14 compliant compiler (checked GCC 7.4.0)
 
-* OpenCV with extra modules (checked version 3.4.1)
+* OpenCV with extra modules (checked version 4.2.0)
 
-* Qt (checked version 5.10.1)
-
-## Known issues
-
-#### Similar images finder: window content is transparent on first start in a Docker container
-
-Resize the window or restart the application.
+* Qt (checked version 5.14.1)
