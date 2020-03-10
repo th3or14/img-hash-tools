@@ -55,36 +55,3 @@ bool CombinedHashHandler::eval_comparison(CombinedHash &a, CombinedHash &b)
     }
     return false;
 }
-
-KeyFramesExtractor::KeyFramesExtractor() : key_frame_nums(std::make_unique<std::vector<size_t>>()),
-    curr_frame_num(0), prev_hash(nullptr) {}
-
-void KeyFramesExtractor::process_next(const cv::Mat &frame)
-{
-    std::unique_ptr<CombinedHash> curr_hash = std::make_unique<CombinedHash>(frame);
-    if (prev_hash != nullptr && !hash_handler.eval_comparison(*curr_hash, *prev_hash))
-        resolve_cluster();
-    prev_hash = std::move(curr_hash);
-    equal_frame_nums_cluster.push_back(curr_frame_num);
-    ++curr_frame_num;
-}
-
-void KeyFramesExtractor::finish_processing()
-{
-    resolve_cluster();
-}
-
-std::unique_ptr<std::vector<size_t>> KeyFramesExtractor::grab_key_frame_nums()
-{
-    std::unique_ptr<std::vector<size_t>> grabbed = std::move(key_frame_nums);
-    key_frame_nums = std::make_unique<std::vector<size_t>>();
-    return grabbed;
-}
-
-void KeyFramesExtractor::resolve_cluster()
-{
-    if (equal_frame_nums_cluster.empty())
-        throw std::logic_error("Resolving cluster is forbidden: cluster is empty.");
-    key_frame_nums->push_back(equal_frame_nums_cluster.at(equal_frame_nums_cluster.size() / 2));
-    equal_frame_nums_cluster.clear();
-}

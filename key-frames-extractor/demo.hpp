@@ -24,7 +24,7 @@ private:
     const QString datetimestamp_format;
     const std::string key_frames_directory;
     cv::VideoCapture cap;
-    std::unique_ptr<std::vector<size_t>> key_frame_nums;
+    std::vector<size_t> key_frame_nums;
 };
 
 #endif // DEMO_HPP

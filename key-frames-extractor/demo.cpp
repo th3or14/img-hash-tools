@@ -62,9 +62,14 @@ void DemoVideo::locate_key_frames()
 {
     try_open_video(cap, input_video_filename);
     size_t frames_cnt = cap.get(cv::CAP_PROP_FRAME_COUNT);
+    if (frames_cnt == 0) {
+        throw std::runtime_error("Found no frames to process.");
+    }
     std::cout << "Found " << frames_cnt << " frames to process.\n";
-    KeyFramesExtractor extractor;
     PercentPrinter printer;
+    CombinedHashHandler hash_handler;
+    std::unique_ptr<CombinedHash> prev_hash = nullptr;
+    std::vector<size_t> borders = {0};
     for (size_t i = 0; i < frames_cnt; ++i)
     {
         if (!cap.grab())
@@ -74,39 +79,41 @@ void DemoVideo::locate_key_frames()
         }
         cv::Mat frame;
         cap.retrieve(frame);
-        extractor.process_next(frame);
+        std::unique_ptr<CombinedHash> curr_hash = std::make_unique<CombinedHash>(frame);
+        if (prev_hash != nullptr && !hash_handler.eval_comparison(*curr_hash, *prev_hash))
+            borders.push_back(i);
+        prev_hash = std::move(curr_hash);
         printer.print_if_percent_changed(i + 1, frames_cnt,
                                          "\rLocating key frames (stage 1 of 2)... ", "%");
     }
+    borders.push_back(frames_cnt - 1);
     cap.release();
-    extractor.finish_processing();
-    key_frame_nums = extractor.grab_key_frame_nums();
-    std::cout << "\nLocated " << key_frame_nums->size() << " key frames.\n";
+    for (size_t i = 1; i < borders.size(); ++i)
+        // b + (a - b) / 2, a >= b (crucial for unsigned)
+        // used against potential overflow of (a + b) / 2
+        key_frame_nums.push_back(borders.at(i - 1) +
+                                 (borders.at(i) -
+                                  borders.at(i - 1)) / 2);
+    std::cout << "\nLocated " << key_frame_nums.size() << " key frames.\n";
 }
 
 void DemoVideo::extract_key_frames()
 {
-    if (key_frame_nums->empty())
+    if (key_frame_nums.empty())
         throw std::logic_error("Error: no key frames found.");
     try_open_video(cap, input_video_filename);
-    std::vector<size_t>::iterator key_frame_num_it = key_frame_nums->begin();
     PercentPrinter printer;
-    for (size_t curr_frame_num = 0; curr_frame_num < key_frame_nums->back() + 1; ++curr_frame_num)
+    for (size_t i = 0; i < key_frame_nums.size(); ++i)
     {
+        cap.set(cv::CAP_PROP_POS_FRAMES, key_frame_nums.at(i));
         if (!cap.grab())
-            throw std::logic_error("Error: reached end of video before end of extraction.");
-        if (key_frame_num_it == key_frame_nums->end())
-            throw std::logic_error("Error: nothing left to extract.");
-        if (curr_frame_num == *key_frame_num_it)
-        {
-            cv::Mat curr_frame;
-            cap.retrieve(curr_frame);
-            cv::imwrite(key_frames_directory + "/" + QTime::fromMSecsSinceStartOfDay(
-                            cap.get(cv::CAP_PROP_POS_MSEC)).toString(
-                            timestamp_format).toStdString() + ".jpg", curr_frame);
-            ++key_frame_num_it;
-        }
-        printer.print_if_percent_changed(curr_frame_num + 1, key_frame_nums->back() + 1,
+            throw std::runtime_error("Error: reached end of video before end of extraction.");
+        cv::Mat curr_frame;
+        cap.retrieve(curr_frame);
+        cv::imwrite(key_frames_directory + "/" + QTime::fromMSecsSinceStartOfDay(
+                        cap.get(cv::CAP_PROP_POS_MSEC)).toString(
+                        timestamp_format).toStdString() + ".jpg", curr_frame);
+        printer.print_if_percent_changed(i + 1, key_frame_nums.size(),
                                          "\rExtracting key frames (stage 2 of 2)... ", "%");
     }
     cap.release();

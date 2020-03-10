@@ -86,22 +86,4 @@ private:
     std::vector<std::unique_ptr<HashHandlerBase>> handlers;
 };
 
-class KeyFramesExtractor
-{
-public:
-    KeyFramesExtractor();
-    void process_next(const cv::Mat &frame);
-    void finish_processing();
-    std::unique_ptr<std::vector<size_t>> grab_key_frame_nums();
-
-private:
-    void resolve_cluster();
-
-    std::unique_ptr<std::vector<size_t>> key_frame_nums;
-    size_t curr_frame_num;
-    std::vector<size_t> equal_frame_nums_cluster;
-    std::unique_ptr<CombinedHash> prev_hash;
-    CombinedHashHandler hash_handler;
-};
-
 #endif // KERNEL_HPP
