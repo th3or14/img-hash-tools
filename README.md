@@ -24,7 +24,7 @@ Helps to remove duplicates and almost duplicates from a specified pictures colle
 
 * A C++14 compliant compiler (checked GCC 7.4.0)
 
-* OpenCV with extra modules (checked version 4.2.0)
+* OpenCV compiled with FFmpeg and extra module img_hash (checked version 4.2.0)
 
 * Qt (checked version 5.14.1)
 
