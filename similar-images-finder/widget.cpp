@@ -57,8 +57,6 @@ Widget::Widget(QWidget *parent) :
             this, &Widget::slot_remove_clicked);
     connect(ui->list, &QListWidget::currentItemChanged,
             this, &Widget::slot_list_currentItemChanged);
-    connect(this, &Widget::signal_progress_state_changed,
-            this, &Widget::slot_progress_state_changed);
     connect(ui->location, &QLineEdit::textChanged,
             this, &Widget::slot_location_textChanged);
 }
@@ -123,11 +121,6 @@ void Widget::slot_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *)
     ui->info->setText(get_current_item_info());
 }
 
-void Widget::slot_progress_state_changed(double current, double total)
-{
-    ui->progress->setValue(current / total * 100);
-}
-
 void Widget::slot_location_textChanged()
 {
     ui->scan->setEnabled(!ui->location->text().isEmpty() && QDir(ui->location->text()).exists());
@@ -144,13 +137,14 @@ HashesPool Widget::get_hashes_pool()
                                               << "*.tiff" << "*.tif", QDir::Files,
                                               QDirIterator::Subdirectories);
     };
+    ui->progress->setFormat("Evaluating images amount (stage 1 of 4)...");
     size_t files_cnt = get_files_cnt(init_dir_it());
     std::unique_ptr<QDirIterator> dir_it = init_dir_it();
-    ui->progress->setFormat("Building hashes pool (stage 1 of 3)... %p%");
+    ui->progress->setFormat("Building hashes pool (stage 2 of 4)... %p%");
     ui->progress->setValue(0);
     for (size_t files_scanned = 0; dir_it->hasNext(); ++files_scanned)
     {
-        emit signal_progress_state_changed(files_scanned + 1, files_cnt);
+        set_progress_state(files_scanned + 1, files_cnt);
         dir_it->next();
         cv::Mat img;
         try
@@ -173,11 +167,11 @@ HashesPool Widget::get_hashes_pool()
 std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &&hashes_pool)
 {
     std::vector<SimilarityCluster> similarity_clusters;
-    ui->progress->setFormat("Building similarity clusters (stage 2 of 3)... %p%");
+    ui->progress->setFormat("Building similarity clusters (stage 3 of 4)... %p%");
     ui->progress->setValue(0);
     for (size_t i = 0; i < hashes_pool.size(); ++i)
     {
-        emit signal_progress_state_changed(i + 1, hashes_pool.size());
+        set_progress_state(i + 1, hashes_pool.size());
         if (hashes_pool.at(i) == nullptr)
             continue;
         SimilarityCluster similarity_cluster;
@@ -199,11 +193,11 @@ std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &&hash
 
 void Widget::build_similarities_list(const std::vector<SimilarityCluster> &similarity_clusters)
 {
-    ui->progress->setFormat("Building similarities list (stage 3 of 3)... %p%");
+    ui->progress->setFormat("Building similarities list (stage 4 of 4)... %p%");
     ui->progress->setValue(0);
     for (size_t i = 0; i < similarity_clusters.size(); ++i)
     {
-        emit signal_progress_state_changed(i + 1, similarity_clusters.size());
+        set_progress_state(i + 1, similarity_clusters.size());
         insert_blank_item();
         for (const auto &image_data : similarity_clusters.at(i))
         {
@@ -256,4 +250,9 @@ void Widget::insert_blank_item()
     QListWidgetItem *blank_item = new QListWidgetItem;
     blank_item->setFlags(Qt::NoItemFlags);
     ui->list->insertItem(0, blank_item);
+}
+
+void Widget::set_progress_state(double current, double total)
+{
+    ui->progress->setValue(current / total * 100);
 }

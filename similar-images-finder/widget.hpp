@@ -30,9 +30,6 @@ public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();
 
-signals:
-    void signal_progress_state_changed(double current, double total);
-
 private slots:
     void slot_browse_clicked();
     void slot_scan_clicked();
@@ -50,6 +47,7 @@ private:
     QImage get_current_item_thumbnail() const;
     QString get_current_item_info() const;
     void insert_blank_item();
+    void set_progress_state(double current, double total);
 
     Ui::Widget *ui;
     PHashHandler hash_handler;
