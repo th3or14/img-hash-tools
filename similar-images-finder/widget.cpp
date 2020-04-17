@@ -87,7 +87,7 @@ void Widget::slot_scan_clicked()
     ui->list->clear();
     ui->image->clear();
     ui->info->clear();
-    progress_dialog = new QProgressDialog(this, nullptr);
+    progress_dialog = new QProgressDialog(this);
     progress_dialog->setWindowModality(Qt::WindowModal);
     progress_bar = new QProgressBar(this);
     progress_dialog->setBar(progress_bar);
