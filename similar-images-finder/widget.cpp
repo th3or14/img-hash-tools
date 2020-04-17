@@ -138,13 +138,13 @@ void Widget::slot_location_textChanged()
 
 void Widget::slot_progress_bar_state_changed(double current, double total)
 {
-    ui->progress_bar->setValue(current / total * 100);
+    progress_bar->setValue(current / total * 100);
 }
 
 void Widget::slot_progress_bar_format_changed(const QString &new_format)
 {
     emit signal_progress_bar_format_changed(new_format);
-    ui->progress_bar->setValue(0);
+    progress_bar->setValue(0);
 }
 
 HashesPool Widget::get_hashes_pool()
