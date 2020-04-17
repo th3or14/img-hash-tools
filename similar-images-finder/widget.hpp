@@ -34,7 +34,7 @@ public:
 
 signals:
     void signal_progress_bar_state_changed(double current, double total);
-    void signal_progress_bar_format_changed(const QSting &new_format);
+    void signal_progress_bar_format_changed(const QString &new_format);
 
 private slots:
     void slot_browse_clicked();
