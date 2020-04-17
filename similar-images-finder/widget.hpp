@@ -30,12 +30,18 @@ public:
     explicit Widget(QWidget *parent = 0);
     ~Widget();
 
+signals:
+    void signal_progress_state_changed(double current, double total);
+    void signal_progress_format_changed(const QSting &new_format);
+
 private slots:
     void slot_browse_clicked();
     void slot_scan_clicked();
     void slot_remove_clicked();
     void slot_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *);
     void slot_location_textChanged();
+    void slot_progress_state_changed(double current, double total);
+    void slot_progress_format_changed(const QString &new_format);
 
 private:
     HashesPool get_hashes_pool();
@@ -46,7 +52,6 @@ private:
     QImage get_current_item_thumbnail() const;
     QString get_current_item_info() const;
     void insert_blank_item();
-    void set_progress_state(double current, double total);
 
     Ui::Widget *ui;
     PHashHandler hash_handler;
