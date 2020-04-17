@@ -11,6 +11,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QListWidget>
+#include <QProgressBar>
 #include <QProgressDialog>
 
 #include <stdio.h>
