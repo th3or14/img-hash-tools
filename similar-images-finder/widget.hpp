@@ -35,7 +35,6 @@ private slots:
     void slot_scan_clicked();
     void slot_remove_clicked();
     void slot_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *);
-    void slot_progress_state_changed(double current, double total);
     void slot_location_textChanged();
 
 private:
