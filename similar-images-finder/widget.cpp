@@ -94,7 +94,7 @@ void Widget::slot_scan_clicked()
     progress_dialog->setWindowModality(Qt::WindowModal);
     progress_dialog->setCancelButton(nullptr);
     progress_dialog->setAttribute(Qt::WA_DeleteOnClose);
-    progress_dialog->show();
+    progress_dialog->open();
     std::thread([this]()
     {
         build_similarities_list(get_similarity_clusters(get_hashes_pool()));
@@ -156,8 +156,8 @@ void Widget::slot_progress_text_changed(const QString &text)
 
 void Widget::slot_progress_closed()
 {
-    QCoreApplication::processEvents();
     progress_dialog->close();
+    progress_dialog = nullptr;
 }
 
 void Widget::slot_item_added(QListWidgetItem *item)
