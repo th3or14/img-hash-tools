@@ -33,10 +33,10 @@ public:
     ~Widget();
 
 signals:
-    void signal_progress_state_changed(double current, double total);
-    void signal_progress_text_changed(const QString &new_format);
+    void signal_progress_value_changed(double, double);
+    void signal_progress_stage_changed(const QString &);
     void signal_progress_closed();
-    void signal_item_added(QListWidgetItem *item);
+    void signal_item_added(QListWidgetItem *);
 
 private slots:
     void slot_browse_clicked();
@@ -44,8 +44,8 @@ private slots:
     void slot_remove_clicked();
     void slot_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *);
     void slot_location_textChanged();
-    void slot_progress_state_changed(double current, double total);
-    void slot_progress_text_changed(const QString &text);
+    void slot_progress_value_changed(double current, double total);
+    void slot_progress_stage_changed(const QString &title);
     void slot_progress_closed();
     void slot_item_added(QListWidgetItem *item);
 
