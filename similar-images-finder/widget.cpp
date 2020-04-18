@@ -224,7 +224,6 @@ void Widget::build_similarities_list(const std::vector<SimilarityCluster> &simil
         }
     }
     progress_dialog = nullptr;
-    progress = nullptr;
 }
 
 void Widget::resize_relative_to_screen_size(double width_multiplier,
