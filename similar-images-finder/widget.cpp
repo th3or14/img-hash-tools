@@ -93,7 +93,7 @@ void Widget::slot_scan_clicked()
     progress_dialog = new QProgressDialog(this);
     progress_dialog->setWindowModality(Qt::WindowModal);
     progress_dialog->setCancelButton(nullptr);
-    progressDialog->setAttribute(Qt::WA_DeleteOnClose);
+    progress_dialog->setAttribute(Qt::WA_DeleteOnClose);
     progress_dialog->show();
     std::thread([this]()
     {
