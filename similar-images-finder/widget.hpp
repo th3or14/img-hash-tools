@@ -14,6 +14,7 @@
 #include <QProgressDialog>
 
 #include <stdio.h>
+#include <thread>
 
 namespace Ui {
 class Widget;
