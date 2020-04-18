@@ -87,6 +87,7 @@ void Widget::slot_browse_clicked()
 
 void Widget::slot_scan_clicked()
 {
+    setEnabled(false);
     ui->list->clear();
     ui->image->clear();
     ui->info->clear();
@@ -158,6 +159,7 @@ void Widget::slot_progress_closed()
 {
     progress_dialog->close();
     progress_dialog = nullptr;
+    setEnabled(true);
 }
 
 void Widget::slot_item_added(QListWidgetItem *item)
