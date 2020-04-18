@@ -61,17 +61,13 @@ Widget::Widget(QWidget *parent) :
     connect(ui->location, &QLineEdit::textChanged,
             this, &Widget::slot_location_textChanged);
     connect(this, &Widget::signal_progress_state_changed,
-            this, &Widget::slot_progress_state_changed,
-            Qt::BlockingQueuedConnection);
+            this, &Widget::slot_progress_state_changed);
     connect(this, &Widget::signal_progress_text_changed,
-            this, &Widget::slot_progress_text_changed,
-            Qt::BlockingQueuedConnection);
+            this, &Widget::slot_progress_text_changed);
     connect(this, &Widget::signal_progress_closed,
-            this, &Widget::slot_progress_closed,
-            Qt::BlockingQueuedConnection);
+            this, &Widget::slot_progress_closed);
     connect(this, &Widget::signal_item_added,
-            this, &Widget::slot_item_added,
-            Qt::BlockingQueuedConnection);
+            this, &Widget::slot_item_added);
 }
 
 Widget::~Widget()
