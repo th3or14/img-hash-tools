@@ -155,6 +155,7 @@ void Widget::slot_progress_text_changed(const QString &text)
 
 void Widget::slot_progress_closed()
 {
+    delete progress_dialog;
     progress_dialog = nullptr;
 }
 
