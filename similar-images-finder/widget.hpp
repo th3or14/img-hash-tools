@@ -11,7 +11,6 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QListWidget>
-#include <QProgressBar>
 #include <QProgressDialog>
 
 #include <stdio.h>
@@ -33,8 +32,8 @@ public:
     ~Widget();
 
 signals:
-    void signal_progress_bar_state_changed(double current, double total);
-    void signal_progress_bar_format_changed(const QString &new_format);
+    void signal_progress_state_changed(double current, double total);
+    void signal_progress_format_changed(const QString &new_format);
 
 private slots:
     void slot_browse_clicked();
@@ -42,8 +41,8 @@ private slots:
     void slot_remove_clicked();
     void slot_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *);
     void slot_location_textChanged();
-    void slot_progress_bar_state_changed(double current, double total);
-    void slot_progress_bar_format_changed(const QString &new_format);
+    void slot_progress_state_changed(double current, double total);
+    void slot_progress_format_changed(const QString &new_format);
 
 private:
     HashesPool get_hashes_pool();
@@ -57,7 +56,6 @@ private:
 
     Ui::Widget *ui;
     PHashHandler hash_handler;
-    QProgressBar *progress_bar;
     QProgressDialog *progress_dialog;
 };
 

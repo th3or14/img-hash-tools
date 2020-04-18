@@ -46,7 +46,6 @@ Widget::Widget(QWidget *parent) :
     {
         return hashes_diff <= 5;
     }),
-    progress_bar(nullptr),
     progress_dialog(nullptr)
 {
     ui->setupUi(this);
@@ -61,10 +60,10 @@ Widget::Widget(QWidget *parent) :
             this, &Widget::slot_list_currentItemChanged);
     connect(ui->location, &QLineEdit::textChanged,
             this, &Widget::slot_location_textChanged);
-    connect(this, &Widget::signal_progress_bar_state_changed,
-            this, &Widget::slot_progress_bar_state_changed);
-    connect(this, &Widget::signal_progress_bar_format_changed,
-            this, &Widget::slot_progress_bar_format_changed);
+    connect(this, &Widget::signal_progress_state_changed,
+            this, &Widget::slot_progress_state_changed);
+    connect(this, &Widget::signal_progress_format_changed,
+            this, &Widget::slot_progress_format_changed);
 }
 
 Widget::~Widget()
@@ -89,8 +88,6 @@ void Widget::slot_scan_clicked()
     ui->info->clear();
     progress_dialog = new QProgressDialog(this);
     progress_dialog->setWindowModality(Qt::WindowModal);
-    progress_bar = new QProgressBar(this);
-    progress_dialog->setBar(progress_bar);
     build_similarities_list(get_similarity_clusters(get_hashes_pool()));
 }
 
@@ -136,20 +133,20 @@ void Widget::slot_location_textChanged()
     ui->scan->setEnabled(!ui->location->text().isEmpty() && QDir(ui->location->text()).exists());
 }
 
-void Widget::slot_progress_bar_state_changed(double current, double total)
+void Widget::slot_progress_state_changed(double current, double total)
 {
-    progress_bar->setValue(current / total * 100);
+    progress_dialog->setValue(current / total * 100);
 }
 
-void Widget::slot_progress_bar_format_changed(const QString &new_format)
+void Widget::slot_progress_format_changed(const QString &new_format)
 {
-    emit signal_progress_bar_format_changed(new_format);
-    progress_bar->setValue(0);
+    progress_dialog->setLabelText(new_format);
+    progress_dialog->setValue(0);
 }
 
 HashesPool Widget::get_hashes_pool()
 {
-    emit signal_progress_bar_format_changed("Evaluating images amount (stage 1 of 4)...");
+    emit signal_progress_format_changed("Evaluating images amount (stage 1 of 4)...");
     auto init_dir_it =
             [path = ui->location->text()]() -> std::unique_ptr<QDirIterator>
     {
@@ -159,12 +156,12 @@ HashesPool Widget::get_hashes_pool()
                                               QDirIterator::Subdirectories);
     };
     size_t files_cnt = get_files_cnt(init_dir_it());
-    emit signal_progress_bar_format_changed("Building hashes pool (stage 2 of 4)... %p%");
+    emit signal_progress_format_changed("Building hashes pool (stage 2 of 4)... %p%");
     std::unique_ptr<QDirIterator> dir_it = init_dir_it();
     HashesPool hashes_pool;
     for (size_t files_scanned = 0; dir_it->hasNext(); ++files_scanned)
     {
-        emit signal_progress_bar_state_changed(files_scanned + 1, files_cnt);
+        emit signal_progress_state_changed(files_scanned + 1, files_cnt);
         dir_it->next();
         cv::Mat img;
         try
@@ -186,11 +183,11 @@ HashesPool Widget::get_hashes_pool()
 
 std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &&hashes_pool)
 {
-    emit signal_progress_bar_format_changed("Building similarity clusters (stage 3 of 4)... %p%");
+    emit signal_progress_format_changed("Building similarity clusters (stage 3 of 4)... %p%");
     std::vector<SimilarityCluster> similarity_clusters;
     for (size_t i = 0; i < hashes_pool.size(); ++i)
     {
-        emit signal_progress_bar_state_changed(i + 1, hashes_pool.size());
+        emit signal_progress_state_changed(i + 1, hashes_pool.size());
         if (hashes_pool.at(i) == nullptr)
             continue;
         SimilarityCluster similarity_cluster;
@@ -212,10 +209,10 @@ std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &&hash
 
 void Widget::build_similarities_list(const std::vector<SimilarityCluster> &similarity_clusters)
 {
-    emit signal_progress_bar_format_changed("Building similarities list (stage 4 of 4)... %p%");
+    emit signal_progress_format_changed("Building similarities list (stage 4 of 4)... %p%");
     for (size_t i = 0; i < similarity_clusters.size(); ++i)
     {
-        emit signal_progress_bar_state_changed(i + 1, similarity_clusters.size());
+        emit signal_progress_state_changed(i + 1, similarity_clusters.size());
         insert_blank_item();
         for (const auto &image_data : similarity_clusters.at(i))
         {
@@ -227,7 +224,7 @@ void Widget::build_similarities_list(const std::vector<SimilarityCluster> &simil
         }
     }
     progress_dialog = nullptr;
-    progress_bar = nullptr;
+    progress = nullptr;
 }
 
 void Widget::resize_relative_to_screen_size(double width_multiplier,
