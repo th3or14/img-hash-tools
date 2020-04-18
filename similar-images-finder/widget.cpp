@@ -150,7 +150,7 @@ void Widget::slot_progress_value_changed(double current, double total)
 
 void Widget::slot_progress_stage_changed(const QString &title)
 {
-    progress_dialog->setwindowtitle(title);
+    progress_dialog->setWindowTitle(title);
     progress_dialog->setValue(0);
 }
 
