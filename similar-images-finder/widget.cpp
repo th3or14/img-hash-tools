@@ -93,6 +93,7 @@ void Widget::slot_scan_clicked()
     progress_dialog = new QProgressDialog(this);
     progress_dialog->setWindowModality(Qt::WindowModal);
     progress_dialog->setCancelButton(nullptr);
+    progressDialog->setAttribute(Qt::WA_DeleteOnClose);
     progress_dialog->show();
     std::thread([this]()
     {
@@ -155,8 +156,7 @@ void Widget::slot_progress_text_changed(const QString &text)
 
 void Widget::slot_progress_closed()
 {
-    delete progress_dialog;
-    progress_dialog = nullptr;
+    progress_dialog->close();
 }
 
 void Widget::slot_item_added(QListWidgetItem *item)
