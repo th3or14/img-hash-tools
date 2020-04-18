@@ -64,6 +64,10 @@ Widget::Widget(QWidget *parent) :
             this, &Widget::slot_progress_state_changed);
     connect(this, &Widget::signal_progress_format_changed,
             this, &Widget::slot_progress_format_changed);
+    connect(this, &Widget::signal_progress_closed,
+            this, &Widget::slot_progress_closed);
+    connect(this, &Widget::signal_item_added,
+            this, &Widget::slot_item_added);
 }
 
 Widget::~Widget()
@@ -144,6 +148,16 @@ void Widget::slot_progress_format_changed(const QString &new_format)
     progress_dialog->setValue(0);
 }
 
+void Widget::slot_progress_closed()
+{
+    progress_dialog = nullptr;
+}
+
+void Widget::slot_item_added(QListWidgetItem *item)
+{
+    ui->list->insertItem(0, item);
+}
+
 HashesPool Widget::get_hashes_pool()
 {
     emit signal_progress_format_changed("Evaluating images amount (stage 1 of 4)...");
@@ -220,10 +234,10 @@ void Widget::build_similarities_list(const std::vector<SimilarityCluster> &simil
             item->setIcon(QIcon(QPixmap::fromImage(get_image_icon(image_data->filename))));
             item->setText(image_data->filename);
             item->setCheckState(Qt::Unchecked);
-            ui->list->insertItem(0, item);
+            emit slot_item_added(item);
         }
     }
-    progress_dialog = nullptr;
+    emit signal_progress_closed();
 }
 
 void Widget::resize_relative_to_screen_size(double width_multiplier,
