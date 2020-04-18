@@ -60,10 +60,10 @@ Widget::Widget(QWidget *parent) :
             this, &Widget::slot_list_currentItemChanged);
     connect(ui->location, &QLineEdit::textChanged,
             this, &Widget::slot_location_textChanged);
-    connect(this, &Widget::signal_progress_value_changed,
-            this, &Widget::slot_progress_value_changed);
-    connect(this, &Widget::signal_progress_stage_changed,
-            this, &Widget::slot_progress_stage_changed);
+    connect(this, &Widget::signal_progress_state_changed,
+            this, &Widget::slot_progress_state_changed);
+    connect(this, &Widget::signal_progress_text_changed,
+            this, &Widget::slot_progress_text_changed);
     connect(this, &Widget::signal_progress_closed,
             this, &Widget::slot_progress_closed);
     connect(this, &Widget::signal_item_added,
@@ -143,14 +143,14 @@ void Widget::slot_location_textChanged()
     ui->scan->setEnabled(!ui->location->text().isEmpty() && QDir(ui->location->text()).exists());
 }
 
-void Widget::slot_progress_value_changed(double current, double total)
+void Widget::slot_progress_state_changed(double current, double total)
 {
     progress_dialog->setValue(current / total * 100);
 }
 
-void Widget::slot_progress_stage_changed(const QString &title)
+void Widget::slot_progress_text_changed(const QString &text)
 {
-    progress_dialog->setWindowTitle(title);
+    progress_dialog->setLabelText(text);
     progress_dialog->setValue(0);
 }
 
@@ -167,7 +167,7 @@ void Widget::slot_item_added(QListWidgetItem *item)
 
 HashesPool Widget::get_hashes_pool()
 {
-    emit signal_progress_stage_changed("Building hashes pool (stage 1 of 3)...");
+    emit signal_progress_text_changed("Building hashes pool (stage 1 of 3)...");
     auto init_dir_it =
             [path = ui->location->text()]() -> std::unique_ptr<QDirIterator>
     {
@@ -181,7 +181,7 @@ HashesPool Widget::get_hashes_pool()
     HashesPool hashes_pool;
     for (size_t files_scanned = 0; dir_it->hasNext(); ++files_scanned)
     {
-        emit signal_progress_value_changed(files_scanned + 1, files_cnt);
+        emit signal_progress_state_changed(files_scanned + 1, files_cnt);
         dir_it->next();
         cv::Mat img;
         try
@@ -203,11 +203,11 @@ HashesPool Widget::get_hashes_pool()
 
 std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &&hashes_pool)
 {
-    emit signal_progress_stage_changed("Building similarity clusters (stage 2 of 3)...");
+    emit signal_progress_text_changed("Building similarity clusters (stage 2 of 3)...");
     std::vector<SimilarityCluster> similarity_clusters;
     for (size_t i = 0; i < hashes_pool.size(); ++i)
     {
-        emit signal_progress_value_changed(i + 1, hashes_pool.size());
+        emit signal_progress_state_changed(i + 1, hashes_pool.size());
         if (hashes_pool.at(i) == nullptr)
             continue;
         SimilarityCluster similarity_cluster;
@@ -229,10 +229,10 @@ std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &&hash
 
 void Widget::build_similarities_list(const std::vector<SimilarityCluster> &similarity_clusters)
 {
-    emit signal_progress_stage_changed("Building similarities list (stage 3 of 3)...");
+    emit signal_progress_text_changed("Building similarities list (stage 3 of 3)...");
     for (size_t i = 0; i < similarity_clusters.size(); ++i)
     {
-        emit signal_progress_value_changed(i + 1, similarity_clusters.size());
+        emit signal_progress_state_changed(i + 1, similarity_clusters.size());
         insert_blank_item();
         for (const auto &image_data : similarity_clusters.at(i))
         {
