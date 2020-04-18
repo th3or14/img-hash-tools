@@ -156,6 +156,7 @@ void Widget::slot_progress_text_changed(const QString &text)
 
 void Widget::slot_progress_closed()
 {
+    QCoreApplication::processEvents();
     progress_dialog->close();
 }
 
