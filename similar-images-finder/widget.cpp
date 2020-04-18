@@ -91,12 +91,13 @@ void Widget::slot_browse_clicked()
 
 void Widget::slot_scan_clicked()
 {
-    progress_dialog = new QProgressDialog(this);
-    progress_dialog->setWindowModality(Qt::WindowModal);
-    progress_dialog->setCancelButton(nullptr);
     ui->list->clear();
     ui->image->clear();
     ui->info->clear();
+    progress_dialog = new QProgressDialog(this);
+    progress_dialog->setWindowModality(Qt::WindowModal);
+    progress_dialog->setCancelButton(nullptr);
+    progress_dialog->exec();
     std::thread([this]()
     {
         build_similarities_list(get_similarity_clusters(get_hashes_pool()));
@@ -158,6 +159,7 @@ void Widget::slot_progress_format_changed(const QString &new_format)
 
 void Widget::slot_progress_closed()
 {
+    progress_dialog->close();
     progress_dialog = nullptr;
 }
 
