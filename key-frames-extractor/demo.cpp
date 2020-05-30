@@ -62,9 +62,8 @@ void DemoVideo::locate_key_frames()
 {
     try_open_video(cap, input_video_filename);
     size_t frames_cnt = cap.get(cv::CAP_PROP_FRAME_COUNT);
-    if (frames_cnt == 0) {
+    if (frames_cnt == 0)
         throw std::runtime_error("Found no frames to process.");
-    }
     std::cout << "Found " << frames_cnt << " frames to process.\n";
     PercentPrinter printer;
     CombinedHashHandler hash_handler;
