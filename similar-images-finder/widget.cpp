@@ -192,7 +192,7 @@ HashesPool Widget::get_hashes_pool()
             if (img.empty())
                 throw std::runtime_error("Empty image " + dir_it->filePath().toStdString());
         }
-        catch(const std::runtime_error &e)
+        catch (const std::runtime_error &e)
         {
             qDebug() << e.what();
             continue;
