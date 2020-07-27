@@ -5,6 +5,7 @@ struct ImageData
 {
     cv::Mat hash;
     QString filename;
+
     ImageData(const cv::Mat &hash, const QString &filename);
 };
 
