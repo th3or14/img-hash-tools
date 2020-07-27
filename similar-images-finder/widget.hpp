@@ -13,7 +13,6 @@
 #include <QListWidget>
 #include <QProgressDialog>
 
-#include <stdio.h>
 #include <thread>
 
 namespace Ui {
