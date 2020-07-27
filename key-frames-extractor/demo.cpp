@@ -79,7 +79,7 @@ void DemoVideo::locate_key_frames()
         cv::Mat frame;
         cap.retrieve(frame);
         std::unique_ptr<CombinedHash> curr_hash = std::make_unique<CombinedHash>(frame);
-        if (prev_hash != nullptr && !hash_handler.eval_comparison(*curr_hash, *prev_hash))
+        if ((prev_hash != nullptr) && !hash_handler.eval_comparison(*curr_hash, *prev_hash))
             borders.push_back(i);
         prev_hash = std::move(curr_hash);
         printer.print_if_percent_changed(i + 1, frames_cnt,
