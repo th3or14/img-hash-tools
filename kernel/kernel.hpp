@@ -21,16 +21,12 @@ private:
     const std::function<bool(double)> thresholding_predicate;
 };
 
-class CombinedHash
+struct CombinedHash
 {
-public:
-    explicit CombinedHash(const cv::Mat &img);
-
-    friend class CombinedHashHandler;
-
-private:
     cv::Mat img;
     std::vector<cv::Mat> hashes;
+
+    explicit CombinedHash(const cv::Mat &img);
 };
 
 class CombinedHashHandler
