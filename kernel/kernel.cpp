@@ -1,42 +1,66 @@
 ﻿#include "kernel.hpp"
 
-HashHandlerBase::HashHandlerBase(const cv::Ptr<cv::img_hash::ImgHashBase> &hash_algorithm,
-                                 const std::function<bool(double)> &thresholding_predicate) :
+namespace {
+
+template <typename T>
+bool get_thresholding_predicate(double hashes_diff);
+
+template<>
+bool get_thresholding_predicate<cv::img_hash::AverageHash>(double hashes_diff)
+{
+    return hashes_diff <= 15;
+}
+
+template<>
+bool get_thresholding_predicate<cv::img_hash::PHash>(double hashes_diff)
+{
+    return hashes_diff <= 15;
+}
+
+template<>
+bool get_thresholding_predicate<cv::img_hash::ColorMomentHash>(double hashes_diff)
+{
+    return hashes_diff <= 5.5;
+}
+
+template<>
+bool get_thresholding_predicate<cv::img_hash::RadialVarianceHash>(double hashes_diff)
+{
+    // yes, >= here
+    return hashes_diff >= 0.708;
+}
+
+template <typename T>
+std::unique_ptr<HashHandler> get_hash_handler()
+{
+    return std::make_unique<HashHandler>(T::create(), get_thresholding_predicate<T>);
+}
+
+}
+
+HashHandler::HashHandler(const cv::Ptr<cv::img_hash::ImgHashBase> &hash_algorithm,
+                         const std::function<bool(double)> &thresholding_predicate) :
     hash_algorithm(hash_algorithm), thresholding_predicate(thresholding_predicate) {}
 
-cv::Mat HashHandlerBase::compute(const cv::Mat &img)
+cv::Mat HashHandler::compute(const cv::Mat &img)
 {
     cv::Mat hash;
     hash_algorithm->compute(img, hash);
     return hash;
 }
 
-bool HashHandlerBase::compare(const cv::Mat &hash_a, const cv::Mat &hash_b) const
+bool HashHandler::compare(const cv::Mat &hash_a, const cv::Mat &hash_b) const
 {
     return thresholding_predicate(hash_algorithm->compare(hash_a, hash_b));
 }
 
-AHashHandler::AHashHandler(const std::function<bool(double)> &thresholding_predicate) :
-    HashHandlerBase(cv::img_hash::AverageHash::create(), thresholding_predicate) {}
-
-PHashHandler::PHashHandler(const std::function<bool(double)> &thresholding_predicate) :
-    HashHandlerBase(cv::img_hash::PHash::create(), thresholding_predicate) {}
-
-CHashHandler::CHashHandler(const std::function<bool(double)> &thresholding_predicate) :
-    HashHandlerBase(cv::img_hash::ColorMomentHash::create(), thresholding_predicate) {}
-
-RHashHandler::RHashHandler(const std::function<bool(double)> &thresholding_predicate) :
-    HashHandlerBase(cv::img_hash::RadialVarianceHash::create(), thresholding_predicate) {}
-
 CombinedHash::CombinedHash(const cv::Mat &img) : img(img) {}
 
-CombinedHashHandler::CombinedHashHandler()
-{
-    handlers.push_back(std::make_unique<AHashHandler>());
-    handlers.push_back(std::make_unique<PHashHandler>());
-    handlers.push_back(std::make_unique<CHashHandler>());
-    handlers.push_back(std::make_unique<RHashHandler>());
-}
+CombinedHashHandler::CombinedHashHandler() :
+    handlers{get_hash_handler<cv::img_hash::AverageHash>(),
+             get_hash_handler<cv::img_hash::PHash>(),
+             get_hash_handler<cv::img_hash::ColorMomentHash>(),
+             get_hash_handler<cv::img_hash::RadialVarianceHash>()} {}
 
 bool CombinedHashHandler::eval_comparison(CombinedHash &a, CombinedHash &b)
 {

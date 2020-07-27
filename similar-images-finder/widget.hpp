@@ -59,7 +59,7 @@ private:
     void insert_blank_item();
 
     Ui::Widget *ui;
-    PHashHandler hash_handler;
+    HashHandler hash_handler;
     QProgressDialog *progress_dialog;
 };
 
