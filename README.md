@@ -20,13 +20,13 @@ Helps to remove duplicates and almost duplicates from a specified pictures colle
 
 ## Requirements
 
-* CMake (checked version 3.10.2)
+* CMake
 
-* A C++14 compliant compiler (checked GCC 7.4.0)
+* A C++14 compliant compiler
 
-* OpenCV compiled with FFmpeg and extra module img_hash (checked version 4.2.0)
+* OpenCV compiled with FFmpeg and extra module img_hash
 
-* Qt (checked version 5.14.1)
+* Qt
 
 ## Running in a Docker container on Linux/X11
 
