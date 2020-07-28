@@ -1,4 +1,4 @@
-﻿#include "kernel.hpp"
+#include "kernel.hpp"
 
 namespace {
 
