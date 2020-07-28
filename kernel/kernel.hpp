@@ -12,7 +12,6 @@ class HashHandler
 public:
     HashHandler(const cv::Ptr<cv::img_hash::ImgHashBase> &hash_algorithm,
                 const std::function<bool(double)> &thresholding_predicate);
-    virtual ~HashHandler() = default;
     cv::Mat compute(const cv::Mat &img);
     bool compare(const cv::Mat &hash_a, const cv::Mat &hash_b) const;
 
