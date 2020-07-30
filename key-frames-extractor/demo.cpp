@@ -2,6 +2,24 @@
 
 namespace {
 
+struct CombinedHash
+{
+    cv::Mat img;
+    std::vector<cv::Mat> hashes;
+
+    explicit CombinedHash(const cv::Mat &img);
+};
+
+class CombinedHashHandler
+{
+public:
+    CombinedHashHandler();
+    bool eval_comparison(CombinedHash &a, CombinedHash &b);
+
+private:
+    std::array<std::unique_ptr<HashHandler>, 4> handlers;
+};
+
 class PercentPrinter
 {
 public:
@@ -15,6 +33,40 @@ private:
 };
 
 } // namespace
+
+template <typename T>
+static bool get_thresholding_predicate(double hashes_diff);
+
+template<>
+bool get_thresholding_predicate<cv::img_hash::AverageHash>(double hashes_diff)
+{
+    return hashes_diff <= 15;
+}
+
+template<>
+bool get_thresholding_predicate<cv::img_hash::PHash>(double hashes_diff)
+{
+    return hashes_diff <= 15;
+}
+
+template<>
+bool get_thresholding_predicate<cv::img_hash::ColorMomentHash>(double hashes_diff)
+{
+    return hashes_diff <= 5.5;
+}
+
+template<>
+bool get_thresholding_predicate<cv::img_hash::RadialVarianceHash>(double hashes_diff)
+{
+    // yes, >= here
+    return hashes_diff >= 0.708;
+}
+
+template <typename T>
+static std::unique_ptr<HashHandler> get_hash_handler()
+{
+    return std::make_unique<HashHandler>(T::create(), get_thresholding_predicate<T>);
+}
 
 static void check_file_exists(const std::string &path)
 {
@@ -39,6 +91,46 @@ static void try_open_video(cv::VideoCapture &vc, const std::string &path)
     if (!vc.open(path))
         throw std::runtime_error("Unable to open '" + path +
                                  "'. Not a video or video format is not supproted.");
+}
+
+CombinedHash::CombinedHash(const cv::Mat &img) : img(img) {}
+
+CombinedHashHandler::CombinedHashHandler() :
+    handlers{get_hash_handler<cv::img_hash::AverageHash>(),
+             get_hash_handler<cv::img_hash::PHash>(),
+             get_hash_handler<cv::img_hash::ColorMomentHash>(),
+             get_hash_handler<cv::img_hash::RadialVarianceHash>()} {}
+
+bool CombinedHashHandler::eval_comparison(CombinedHash &a, CombinedHash &b)
+{
+    if (a.img.empty() || b.img.empty())
+        throw std::logic_error("Evaluating comparison is forbidden: empty image.");
+    a.hashes.resize(handlers.size());
+    b.hashes.resize(handlers.size());
+    for (size_t i = 0; i < handlers.size(); ++i)
+    {
+        if (a.hashes.at(i).empty())
+            a.hashes.at(i) = handlers.at(i)->compute(a.img);
+        if (b.hashes.at(i).empty())
+            b.hashes.at(i) = handlers.at(i)->compute(b.img);
+        if (handlers.at(i)->compare(a.hashes.at(i), b.hashes.at(i)))
+            return true;
+    }
+    return false;
+}
+
+PercentPrinter::PercentPrinter() : displayed_percent(-1) {}
+
+void PercentPrinter::print_if_percent_changed(double current, double total,
+                                              const std::string &prefix,
+                                              const std::string &postfix)
+{
+    int actual_percent = current / total * 100;
+    if (actual_percent != displayed_percent)
+    {
+        std::cout << prefix << actual_percent << postfix << std::flush;
+        displayed_percent = actual_percent;
+    }
 }
 
 void DemoVideo::start(const std::string &input_video_filename, const std::string &output_location)
@@ -117,18 +209,4 @@ void DemoVideo::extract_key_frames()
     }
     cap.release();
     std::cout << "\n";
-}
-
-PercentPrinter::PercentPrinter() : displayed_percent(-1) {}
-
-void PercentPrinter::print_if_percent_changed(double current, double total,
-                                              const std::string &prefix,
-                                              const std::string &postfix)
-{
-    int actual_percent = current / total * 100;
-    if (actual_percent != displayed_percent)
-    {
-        std::cout << prefix << actual_percent << postfix << std::flush;
-        displayed_percent = actual_percent;
-    }
 }

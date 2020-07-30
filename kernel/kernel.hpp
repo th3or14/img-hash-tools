@@ -20,22 +20,4 @@ private:
     const std::function<bool(double)> thresholding_predicate;
 };
 
-struct CombinedHash
-{
-    cv::Mat img;
-    std::vector<cv::Mat> hashes;
-
-    explicit CombinedHash(const cv::Mat &img);
-};
-
-class CombinedHashHandler
-{
-public:
-    CombinedHashHandler();
-    bool eval_comparison(CombinedHash &a, CombinedHash &b);
-
-private:
-    std::array<std::unique_ptr<HashHandler>, 4> handlers;
-};
-
 #endif // KERNEL_HPP
