@@ -2,9 +2,11 @@
 
 #include <QApplication>
 
+#include <cstdio>
+
 int main(int argc, char *argv[])
 {
-    stderr = freopen("log.txt", "w", stderr);
+    stderr = std::freopen("log.txt", "w", stderr);
     QApplication a(argc, argv);
     SimilarImagesFinder w;
     w.show();
