@@ -22,6 +22,6 @@ int main(int argc, char *argv[])
         std::cout << "Required arguments:\n\tinput video filename\n\toutput location\n";
         throw;
     }
-    DemoVideo::start(argv[1], argv[2]);
+    KeyFramesExtractor::start(argv[1], argv[2]);
     return EXIT_SUCCESS;
 }

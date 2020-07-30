@@ -8,13 +8,14 @@
 #include <QTime>
 #include <QDir>
 
-class DemoVideo
+class KeyFramesExtractor
 {
 public:
     static void start(const std::string &input_video_filename, const std::string &output_location);
 
 private:
-    DemoVideo(const std::string &input_video_filename, const std::string &output_location);
+    KeyFramesExtractor(const std::string &input_video_filename,
+                       const std::string &output_location);
     void locate_key_frames();
     void extract_key_frames();
 

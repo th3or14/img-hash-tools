@@ -23,13 +23,13 @@ struct ImageData;
 
 typedef std::vector<std::unique_ptr<ImageData>> HashesPool, SimilarityCluster;
 
-class Widget : public QWidget
+class SimilarImagesFinder : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Widget(QWidget *parent = 0);
-    ~Widget();
+    explicit SimilarImagesFinder(QWidget *parent = 0);
+    ~SimilarImagesFinder();
 
 signals:
     void signal_progress_state_changed(double current, double total);

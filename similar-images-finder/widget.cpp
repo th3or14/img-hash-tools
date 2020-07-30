@@ -40,7 +40,7 @@ static size_t get_files_cnt(std::unique_ptr<QDirIterator> dir_it)
     return files_cnt;
 }
 
-Widget::Widget(QWidget *parent) :
+SimilarImagesFinder::SimilarImagesFinder(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget),
     hash_handler(cv::img_hash::PHash::create(), [](double hashes_diff) -> bool
@@ -52,31 +52,31 @@ Widget::Widget(QWidget *parent) :
     ui->setupUi(this);
     resize_relative_to_screen_size(0.8, 0.8);
     connect(ui->browse, &QPushButton::clicked,
-            this, &Widget::slot_browse_clicked);
+            this, &SimilarImagesFinder::slot_browse_clicked);
     connect(ui->scan, &QPushButton::clicked,
-            this, &Widget::slot_scan_clicked);
+            this, &SimilarImagesFinder::slot_scan_clicked);
     connect(ui->remove, &QPushButton::clicked,
-            this, &Widget::slot_remove_clicked);
+            this, &SimilarImagesFinder::slot_remove_clicked);
     connect(ui->list, &QListWidget::currentItemChanged,
-            this, &Widget::slot_list_currentItemChanged);
+            this, &SimilarImagesFinder::slot_list_currentItemChanged);
     connect(ui->location, &QLineEdit::textChanged,
-            this, &Widget::slot_location_textChanged);
-    connect(this, &Widget::signal_progress_state_changed,
-            this, &Widget::slot_progress_state_changed);
-    connect(this, &Widget::signal_progress_text_changed,
-            this, &Widget::slot_progress_text_changed);
-    connect(this, &Widget::signal_progress_closed,
-            this, &Widget::slot_progress_closed);
-    connect(this, &Widget::signal_item_added,
-            this, &Widget::slot_item_added);
+            this, &SimilarImagesFinder::slot_location_textChanged);
+    connect(this, &SimilarImagesFinder::signal_progress_state_changed,
+            this, &SimilarImagesFinder::slot_progress_state_changed);
+    connect(this, &SimilarImagesFinder::signal_progress_text_changed,
+            this, &SimilarImagesFinder::slot_progress_text_changed);
+    connect(this, &SimilarImagesFinder::signal_progress_closed,
+            this, &SimilarImagesFinder::slot_progress_closed);
+    connect(this, &SimilarImagesFinder::signal_item_added,
+            this, &SimilarImagesFinder::slot_item_added);
 }
 
-Widget::~Widget()
+SimilarImagesFinder::~SimilarImagesFinder()
 {
     delete ui;
 }
 
-void Widget::slot_browse_clicked()
+void SimilarImagesFinder::slot_browse_clicked()
 {
     QString directory = QFileDialog::getExistingDirectory(this, "Open Directory",
                                                           ui->location->text(),
@@ -86,7 +86,7 @@ void Widget::slot_browse_clicked()
         ui->location->setText(directory);
 }
 
-void Widget::slot_scan_clicked()
+void SimilarImagesFinder::slot_scan_clicked()
 {
     setEnabled(false);
     ui->list->clear();
@@ -103,7 +103,7 @@ void Widget::slot_scan_clicked()
     }).detach();
 }
 
-void Widget::slot_remove_clicked()
+void SimilarImagesFinder::slot_remove_clicked()
 {
     std::vector<QListWidgetItem *> items_to_remove;
     for (int i = 0; i < ui->list->count(); ++i)
@@ -130,7 +130,7 @@ void Widget::slot_remove_clicked()
     remove_adjucent_blank_items();
 }
 
-void Widget::slot_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *)
+void SimilarImagesFinder::slot_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *)
 {
     if (ui->list->currentRow() == -1)
         return;
@@ -140,35 +140,35 @@ void Widget::slot_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *)
     ui->info->setText(get_current_item_info());
 }
 
-void Widget::slot_location_textChanged()
+void SimilarImagesFinder::slot_location_textChanged()
 {
     ui->scan->setEnabled(!ui->location->text().isEmpty() && QDir(ui->location->text()).exists());
 }
 
-void Widget::slot_progress_state_changed(double current, double total)
+void SimilarImagesFinder::slot_progress_state_changed(double current, double total)
 {
     progress_dialog->setValue(current / total * 100);
 }
 
-void Widget::slot_progress_text_changed(const QString &text)
+void SimilarImagesFinder::slot_progress_text_changed(const QString &text)
 {
     progress_dialog->setLabelText(text);
     progress_dialog->setValue(0);
 }
 
-void Widget::slot_progress_closed()
+void SimilarImagesFinder::slot_progress_closed()
 {
     progress_dialog->close();
     progress_dialog = nullptr;
     setEnabled(true);
 }
 
-void Widget::slot_item_added(QListWidgetItem *item)
+void SimilarImagesFinder::slot_item_added(QListWidgetItem *item)
 {
     ui->list->insertItem(0, item);
 }
 
-HashesPool Widget::get_hashes_pool()
+HashesPool SimilarImagesFinder::get_hashes_pool()
 {
     emit signal_progress_text_changed("Building hashes pool (stage 1 of 3)...");
     auto init_dir_it =
@@ -204,7 +204,8 @@ HashesPool Widget::get_hashes_pool()
     return hashes_pool;
 }
 
-std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &&hashes_pool)
+std::vector<SimilarityCluster> SimilarImagesFinder::get_similarity_clusters(
+        HashesPool &&hashes_pool)
 {
     emit signal_progress_text_changed("Building similarity clusters (stage 2 of 3)...");
     std::vector<SimilarityCluster> similarity_clusters;
@@ -230,7 +231,8 @@ std::vector<SimilarityCluster> Widget::get_similarity_clusters(HashesPool &&hash
     return similarity_clusters;
 }
 
-void Widget::build_similarities_list(const std::vector<SimilarityCluster> &similarity_clusters)
+void SimilarImagesFinder::build_similarities_list(
+        const std::vector<SimilarityCluster> &similarity_clusters)
 {
     emit signal_progress_text_changed("Building similarities list (stage 3 of 3)...");
     for (size_t i = 0; i < similarity_clusters.size(); ++i)
@@ -249,14 +251,14 @@ void Widget::build_similarities_list(const std::vector<SimilarityCluster> &simil
     emit signal_progress_closed();
 }
 
-void Widget::resize_relative_to_screen_size(double width_multiplier,
-                                            double height_multiplier)
+void SimilarImagesFinder::resize_relative_to_screen_size(double width_multiplier,
+                                                         double height_multiplier)
 {
     QSize screen_size = qApp->screens().at(0)->size();
     resize(screen_size.width() * width_multiplier, screen_size.height() * height_multiplier);
 }
 
-void Widget::remove_adjucent_blank_items()
+void SimilarImagesFinder::remove_adjucent_blank_items()
 {
     for (int i = 1; i < ui->list->count(); ++i)
         if (ui->list->item(i - 1)->text().isEmpty() && ui->list->item(i)->text().isEmpty())
@@ -266,13 +268,13 @@ void Widget::remove_adjucent_blank_items()
         }
 }
 
-QImage Widget::get_current_item_thumbnail() const
+QImage SimilarImagesFinder::get_current_item_thumbnail() const
 {
     return QImage(ui->list->currentItem()->text()).scaled(ui->image->size(), Qt::KeepAspectRatio,
                                                           Qt::SmoothTransformation);
 }
 
-QString Widget::get_current_item_info() const
+QString SimilarImagesFinder::get_current_item_info() const
 {
     QFileInfo file_info(ui->list->currentItem()->text());
     QString info_string = "File path: " + file_info.absoluteFilePath() + "\n" +
@@ -282,7 +284,7 @@ QString Widget::get_current_item_info() const
     return info_string;
 }
 
-void Widget::insert_blank_item()
+void SimilarImagesFinder::insert_blank_item()
 {
     QListWidgetItem *blank_item = new QListWidgetItem;
     blank_item->setFlags(Qt::NoItemFlags);

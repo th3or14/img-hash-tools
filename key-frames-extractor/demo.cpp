@@ -133,24 +133,26 @@ void PercentPrinter::print_if_percent_changed(double current, double total,
     }
 }
 
-void DemoVideo::start(const std::string &input_video_filename, const std::string &output_location)
+void KeyFramesExtractor::start(const std::string &input_video_filename,
+                               const std::string &output_location)
 {
     check_file_exists(input_video_filename);
     check_directory_exists(output_location);
-    DemoVideo dv(input_video_filename, output_location);
-    try_create_directory(dv.key_frames_directory);
-    dv.locate_key_frames();
-    dv.extract_key_frames();
+    KeyFramesExtractor kfe(input_video_filename, output_location);
+    try_create_directory(kfe.key_frames_directory);
+    kfe.locate_key_frames();
+    kfe.extract_key_frames();
 }
 
-DemoVideo::DemoVideo(const std::string &input_video_filename, const std::string &output_location) :
+KeyFramesExtractor::KeyFramesExtractor(const std::string &input_video_filename,
+                                       const std::string &output_location) :
     input_video_filename(input_video_filename), output_location(output_location),
     timestamp_format("HH-mm-ss-zzz"), datetimestamp_format("yyyy-MM-ddT" + timestamp_format),
     key_frames_directory(output_location + "/" +
                          QDateTime::currentDateTime().toString(datetimestamp_format).toStdString())
 {}
 
-void DemoVideo::locate_key_frames()
+void KeyFramesExtractor::locate_key_frames()
 {
     try_open_video(cap, input_video_filename);
     size_t frames_cnt = cap.get(cv::CAP_PROP_FRAME_COUNT);
@@ -188,7 +190,7 @@ void DemoVideo::locate_key_frames()
     std::cout << "\nLocated " << key_frame_nums.size() << " key frames.\n";
 }
 
-void DemoVideo::extract_key_frames()
+void KeyFramesExtractor::extract_key_frames()
 {
     if (key_frame_nums.empty())
         throw std::logic_error("Error: no key frames found.");
