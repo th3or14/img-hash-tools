@@ -15,7 +15,7 @@ Usage: `./key-frames-extractor <input video filename> <output location>`
 Helps to remove duplicates and almost duplicates from a specified pictures collection.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/37025359/45453877-bcbe7100-b6ea-11e8-8080-b601d207fc94.jpg">
+  <img src="https://user-images.githubusercontent.com/37025359/88987759-93f3f480-d2df-11ea-9a54-7fa39a72ffcd.png">
 </p>
 
 ## Requirements
