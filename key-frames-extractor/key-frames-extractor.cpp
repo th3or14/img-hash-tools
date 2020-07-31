@@ -32,6 +32,26 @@ private:
     int displayed_percent;
 };
 
+
+class KeyFramesExtractor
+{
+public:
+    KeyFramesExtractor(const std::string &input_video_filename,
+                       const std::string &output_location);
+    void locate_key_frames();
+    void extract_key_frames();
+    std::string get_key_frames_directory() const;
+
+private:
+    const std::string input_video_filename;
+    const std::string output_location;
+    const QString timestamp_format;
+    const QString datetimestamp_format;
+    const std::string key_frames_directory;
+    cv::VideoCapture cap;
+    std::vector<size_t> key_frame_nums;
+};
+
 } // namespace
 
 template <typename T>
@@ -133,17 +153,6 @@ void PercentPrinter::print_if_percent_changed(double current, double total,
     }
 }
 
-void KeyFramesExtractor::start(const std::string &input_video_filename,
-                               const std::string &output_location)
-{
-    check_file_exists(input_video_filename);
-    check_directory_exists(output_location);
-    KeyFramesExtractor kfe(input_video_filename, output_location);
-    try_create_directory(kfe.key_frames_directory);
-    kfe.locate_key_frames();
-    kfe.extract_key_frames();
-}
-
 KeyFramesExtractor::KeyFramesExtractor(const std::string &input_video_filename,
                                        const std::string &output_location) :
     input_video_filename(input_video_filename), output_location(output_location),
@@ -211,4 +220,20 @@ void KeyFramesExtractor::extract_key_frames()
     }
     cap.release();
     std::cout << "\n";
+}
+
+std::string KeyFramesExtractor::get_key_frames_directory() const
+{
+    return key_frames_directory;
+}
+
+void extract_key_frames(const std::string &input_video_filename,
+                        const std::string &output_location)
+{
+    check_file_exists(input_video_filename);
+    check_directory_exists(output_location);
+    KeyFramesExtractor kfe(input_video_filename, output_location);
+    try_create_directory(kfe.get_key_frames_directory());
+    kfe.locate_key_frames();
+    kfe.extract_key_frames();
 }

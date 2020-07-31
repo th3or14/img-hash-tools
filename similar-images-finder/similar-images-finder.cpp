@@ -9,9 +9,6 @@ struct ImageData
     ImageData(const cv::Mat &hash, const QString &filename);
 };
 
-ImageData::ImageData(const cv::Mat &hash, const QString &filename) :
-    hash(hash), filename(filename) {}
-
 static QString format_file_size(qlonglong bytes)
 {
     QString b = QString("%L1").arg(bytes, -1, 'f', 0, ' ') + " bytes";
@@ -39,6 +36,9 @@ static size_t get_files_cnt(std::unique_ptr<QDirIterator> dir_it)
     }
     return files_cnt;
 }
+
+ImageData::ImageData(const cv::Mat &hash, const QString &filename) :
+    hash(hash), filename(filename) {}
 
 SimilarImagesFinder::SimilarImagesFinder(QWidget *parent) :
     QWidget(parent),

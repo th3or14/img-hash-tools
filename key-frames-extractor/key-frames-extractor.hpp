@@ -8,24 +8,7 @@
 #include <QTime>
 #include <QDir>
 
-class KeyFramesExtractor
-{
-public:
-    static void start(const std::string &input_video_filename, const std::string &output_location);
-
-private:
-    KeyFramesExtractor(const std::string &input_video_filename,
-                       const std::string &output_location);
-    void locate_key_frames();
-    void extract_key_frames();
-
-    const std::string input_video_filename;
-    const std::string output_location;
-    const QString timestamp_format;
-    const QString datetimestamp_format;
-    const std::string key_frames_directory;
-    cv::VideoCapture cap;
-    std::vector<size_t> key_frame_nums;
-};
+void extract_key_frames(const std::string &input_video_filename,
+                        const std::string &output_location);
 
 #endif // KEY_FRAMES_EXTRACTOR_HPP
