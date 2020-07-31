@@ -50,7 +50,7 @@ SimilarImagesFinder::SimilarImagesFinder(QWidget *parent) :
     progress_dialog(nullptr)
 {
     ui->setupUi(this);
-    resize_relative_to_screen_size(0.8, 0.8);
+    resize_relatively_to_screen_size(0.8, 0.8);
     connect(ui->browse, &QPushButton::clicked,
             this, &SimilarImagesFinder::slot_browse_clicked);
     connect(ui->scan, &QPushButton::clicked,
@@ -251,8 +251,8 @@ void SimilarImagesFinder::build_similarities_list(
     emit signal_progress_closed();
 }
 
-void SimilarImagesFinder::resize_relative_to_screen_size(double width_multiplier,
-                                                         double height_multiplier)
+void SimilarImagesFinder::resize_relatively_to_screen_size(double width_multiplier,
+                                                           double height_multiplier)
 {
     QSize screen_size = qApp->screens().at(0)->size();
     resize(screen_size.width() * width_multiplier, screen_size.height() * height_multiplier);
