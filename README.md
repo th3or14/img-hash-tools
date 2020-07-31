@@ -28,6 +28,6 @@ Helps to remove duplicates and almost duplicates from a specified pictures colle
 
 * Qt
 
-## Running in a Docker container on Linux/X11
+## Building
 
-As an alternative to installation you can build and run this project in a Docker container. Run `docker/start.sh` for a quick start. Afterwards you can use created symlinks to the built applications in the root directory of a running container. Input data can be accessed via a mounted shared folder.
+Use `CMakeLists.txt` from the top directory. On Linux/X11 you can also build and run this project in a Docker container. Then Docker is required. Run `docker/start.sh` for a quick start. Afterwards you can use created symlinks to the built applications in the root directory of a running container. Input data can be accessed via a mounted shared folder.
