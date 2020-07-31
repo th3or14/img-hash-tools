@@ -1,0 +1,5 @@
+project(hash-handler)
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+add_library(${PROJECT_NAME} hash-handler.hpp hash-handler.cpp)
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
