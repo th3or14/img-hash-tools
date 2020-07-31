@@ -1,4 +1,4 @@
-#include "kernel.hpp"
+#include "hash-handler.hpp"
 
 HashHandler::HashHandler(const cv::Ptr<cv::img_hash::ImgHashBase> &hash_algorithm,
                          const std::function<bool(double)> &thresholding_predicate) :

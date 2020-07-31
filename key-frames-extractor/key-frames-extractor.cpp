@@ -1,4 +1,4 @@
-#include "demo.hpp"
+#include "key-frames-extractor.hpp"
 
 namespace {
 

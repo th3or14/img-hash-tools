@@ -1,7 +1,7 @@
-#ifndef DEMO_HPP
-#define DEMO_HPP
+#ifndef KEY_FRAMES_EXTRACTOR_HPP
+#define KEY_FRAMES_EXTRACTOR_HPP
 
-#include <kernel/kernel.hpp>
+#include <hash-handler/hash-handler.hpp>
 
 #include <iostream>
 
@@ -28,4 +28,4 @@ private:
     std::vector<size_t> key_frame_nums;
 };
 
-#endif // DEMO_HPP
+#endif // KEY_FRAMES_EXTRACTOR_HPP

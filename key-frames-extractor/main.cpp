@@ -1,4 +1,4 @@
-#include "demo.hpp"
+#include "key-frames-extractor.hpp"
 
 static void check_argc(int argc_given, int argc_expected)
 {

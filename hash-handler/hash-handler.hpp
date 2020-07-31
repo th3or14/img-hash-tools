@@ -1,5 +1,5 @@
-#ifndef KERNEL_HPP
-#define KERNEL_HPP
+#ifndef HASH_HANDLER_HPP
+#define HASH_HANDLER_HPP
 
 #include <memory>
 #include <queue>
@@ -20,4 +20,4 @@ private:
     const std::function<bool(double)> thresholding_predicate;
 };
 
-#endif // KERNEL_HPP
+#endif // HASH_HANDLER_HPP

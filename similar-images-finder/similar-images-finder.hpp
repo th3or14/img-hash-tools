@@ -1,7 +1,7 @@
-#ifndef WIDGET_HPP
-#define WIDGET_HPP
+#ifndef SIMILAR_IMAGES_FINDER_HPP
+#define SIMILAR_IMAGES_FINDER_HPP
 
-#include <kernel/kernel.hpp>
+#include <hash-handler/hash-handler.hpp>
 
 #include <QImage>
 #include <QDirIterator>
@@ -63,4 +63,4 @@ private:
     QProgressDialog *progress_dialog;
 };
 
-#endif // WIDGET_HPP
+#endif // SIMILAR_IMAGES_FINDER_HPP

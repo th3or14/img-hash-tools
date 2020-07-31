@@ -1,4 +1,4 @@
-#include "widget.hpp"
+#include "similar-images-finder.hpp"
 
 #include <QApplication>
 
