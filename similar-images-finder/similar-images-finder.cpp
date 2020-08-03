@@ -93,6 +93,7 @@ void SimilarImagesFinder::slot_scan_clicked()
     ui->image->clear();
     ui->info->clear();
     progress_dialog = new QProgressDialog(this);
+    progress_dialog->setWindowTitle("Scan is in progress");
     progress_dialog->setWindowModality(Qt::WindowModal);
     progress_dialog->setCancelButton(nullptr);
     progress_dialog->setAttribute(Qt::WA_DeleteOnClose);
