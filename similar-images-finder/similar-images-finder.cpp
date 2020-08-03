@@ -37,6 +37,13 @@ static size_t get_files_cnt(std::unique_ptr<QDirIterator> dir_it)
     return files_cnt;
 }
 
+static QListWidgetItem *get_blank_item()
+{
+    QListWidgetItem *blank_item = new QListWidgetItem;
+    blank_item->setFlags(Qt::NoItemFlags);
+    return blank_item;
+}
+
 ImageData::ImageData(const cv::Mat &hash, const QString &filename) :
     hash(hash), filename(filename) {}
 
@@ -239,7 +246,7 @@ void SimilarImagesFinder::build_similarities_list(
     for (size_t i = 0; i < similarity_clusters.size(); ++i)
     {
         emit signal_progress_state_changed(i + 1, similarity_clusters.size());
-        insert_blank_item();
+        emit slot_item_added(get_blank_item());
         for (const auto &image_data : similarity_clusters.at(i))
         {
             QListWidgetItem *item = new QListWidgetItem;
@@ -283,11 +290,4 @@ QString SimilarImagesFinder::get_current_item_info() const
             "Created: " + file_info.created().toString() + "\n" +
             "Last modified: " + file_info.lastModified().toString();
     return info_string;
-}
-
-void SimilarImagesFinder::insert_blank_item()
-{
-    QListWidgetItem *blank_item = new QListWidgetItem;
-    blank_item->setFlags(Qt::NoItemFlags);
-    ui->list->insertItem(0, blank_item);
 }

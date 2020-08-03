@@ -56,7 +56,6 @@ private:
     void remove_adjucent_blank_items();
     QImage get_current_item_thumbnail() const;
     QString get_current_item_info() const;
-    void insert_blank_item();
 
     Ui::Widget *ui;
     HashHandler hash_handler;
