@@ -246,14 +246,14 @@ void SimilarImagesFinder::build_similarities_list(
     for (size_t i = 0; i < similarity_clusters.size(); ++i)
     {
         emit signal_progress_state_changed(i + 1, similarity_clusters.size());
-        emit slot_item_added(get_blank_item());
+        emit signal_item_added(get_blank_item());
         for (const auto &image_data : similarity_clusters.at(i))
         {
             QListWidgetItem *item = new QListWidgetItem;
             item->setIcon(QIcon(QPixmap::fromImage(get_image_icon(image_data->filename))));
             item->setText(image_data->filename);
             item->setCheckState(Qt::Unchecked);
-            emit slot_item_added(item);
+            emit signal_item_added(item);
         }
     }
     emit signal_progress_closed();
