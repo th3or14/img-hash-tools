@@ -32,7 +32,6 @@ private:
     int displayed_percent;
 };
 
-
 class KeyFramesExtractor
 {
 public:
