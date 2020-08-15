@@ -35,14 +35,10 @@ private:
 class KeyFramesExtractor
 {
 public:
-    KeyFramesExtractor(const QString &input_video_filename,
-                       const QString &key_frames_directory);
-    void locate_key_frames();
-    void extract_key_frames();
+    void locate_key_frames(const QString &input_video_filename);
+    void extract_key_frames(const QString &key_frames_directory);
 
 private:
-    QString input_video_filename;
-    QString key_frames_directory;
     cv::VideoCapture cap;
     std::vector<size_t> key_frame_nums;
 };
@@ -152,12 +148,9 @@ void PercentPrinter::print_if_percent_changed(double current, double total,
     }
 }
 
-KeyFramesExtractor::KeyFramesExtractor(const QString &input_video_filename,
-                                       const QString &key_frames_directory) :
-    input_video_filename(input_video_filename), key_frames_directory(key_frames_directory) {}
-
-void KeyFramesExtractor::locate_key_frames()
+void KeyFramesExtractor::locate_key_frames(const QString &input_video_filename)
 {
+    key_frame_nums.clear();
     try_open_video(cap, input_video_filename);
     size_t frames_cnt = cap.get(cv::CAP_PROP_FRAME_COUNT);
     if (frames_cnt == 0)
@@ -184,7 +177,6 @@ void KeyFramesExtractor::locate_key_frames()
                                          "\rLocating key frames (stage 1 of 2)... ", "%");
     }
     borders.push_back(frames_cnt - 1);
-    cap.release();
     for (size_t i = 1; i < borders.size(); ++i)
         // b + (a - b) / 2, a >= b (crucial for unsigned)
         // used against potential overflow of (a + b) / 2
@@ -194,11 +186,12 @@ void KeyFramesExtractor::locate_key_frames()
     std::cout << "\nLocated " << key_frame_nums.size() << " key frames.\n";
 }
 
-void KeyFramesExtractor::extract_key_frames()
+void KeyFramesExtractor::extract_key_frames(const QString &key_frames_directory)
 {
     if (key_frame_nums.empty())
         throw std::logic_error("Error: no key frames found.");
-    try_open_video(cap, input_video_filename);
+    if (!cap.isOpened())
+        throw std::logic_error("Error: video is not opened.");
     PercentPrinter printer;
     for (size_t i = 0; i < key_frame_nums.size(); ++i)
     {
@@ -213,19 +206,17 @@ void KeyFramesExtractor::extract_key_frames()
         printer.print_if_percent_changed(i + 1, key_frame_nums.size(),
                                          "\rExtracting key frames (stage 2 of 2)... ", "%");
     }
-    cap.release();
     std::cout << "\n";
 }
 
-void extract_key_frames(const QString &input_video_filename,
-                        const QString &output_location)
+void extract_key_frames(const QString &input_video_filename, const QString &output_location)
 {
     check_file_exists(input_video_filename);
     check_directory_exists(output_location);
     QString key_frames_directory(output_location + "/" +
                                  QDateTime::currentDateTime().toString(datetimestamp_format));
     try_create_directory(key_frames_directory);
-    KeyFramesExtractor kfe(input_video_filename, key_frames_directory);
-    kfe.locate_key_frames();
-    kfe.extract_key_frames();
+    KeyFramesExtractor kfe;
+    kfe.locate_key_frames(input_video_filename);
+    kfe.extract_key_frames(key_frames_directory);
 }
