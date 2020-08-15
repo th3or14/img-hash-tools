@@ -3,10 +3,16 @@
 #include <QApplication>
 
 #include <cstdio>
+#include <iostream>
 
 int main(int argc, char *argv[])
 {
-    stderr = std::freopen("log.txt", "w", stderr);
+    static const std::string log_filename = "log.txt";
+    if (std::freopen(log_filename.c_str(), "w", stderr) == nullptr)
+    {
+        std::cout << "Failed to redirect stderr to '" << log_filename << "'.\n";
+        return EXIT_FAILURE;
+    }
     QApplication a(argc, argv);
     SimilarImagesFinder w;
     w.show();
