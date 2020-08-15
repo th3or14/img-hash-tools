@@ -56,6 +56,9 @@ private:
     void remove_adjucent_blank_items();
     QImage get_current_item_thumbnail() const;
     QString get_current_item_info() const;
+    void init_progress_dialog();
+    void clear_ui();
+    void setup_connections();
 
     Ui::Widget *ui;
     HashHandler hash_handler;

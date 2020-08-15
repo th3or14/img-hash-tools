@@ -44,6 +44,15 @@ static QListWidgetItem *get_blank_item()
     return blank_item;
 }
 
+static QListWidgetItem *get_item(const QString &filename)
+{
+    QListWidgetItem *item = new QListWidgetItem;
+    item->setIcon(QIcon(QPixmap::fromImage(get_image_icon(filename))));
+    item->setText(filename);
+    item->setCheckState(Qt::Unchecked);
+    return item;
+}
+
 ImageData::ImageData(const cv::Mat &hash, const QString &filename) :
     hash(hash), filename(filename) {}
 
@@ -58,24 +67,7 @@ SimilarImagesFinder::SimilarImagesFinder(QWidget *parent) :
 {
     ui->setupUi(this);
     resize_relatively_to_screen_size(0.8, 0.8);
-    connect(ui->browse, &QPushButton::clicked,
-            this, &SimilarImagesFinder::slot_browse_clicked);
-    connect(ui->scan, &QPushButton::clicked,
-            this, &SimilarImagesFinder::slot_scan_clicked);
-    connect(ui->remove, &QPushButton::clicked,
-            this, &SimilarImagesFinder::slot_remove_clicked);
-    connect(ui->list, &QListWidget::currentItemChanged,
-            this, &SimilarImagesFinder::slot_list_currentItemChanged);
-    connect(ui->location, &QLineEdit::textChanged,
-            this, &SimilarImagesFinder::slot_location_textChanged);
-    connect(this, &SimilarImagesFinder::signal_progress_state_changed,
-            this, &SimilarImagesFinder::slot_progress_state_changed);
-    connect(this, &SimilarImagesFinder::signal_progress_text_changed,
-            this, &SimilarImagesFinder::slot_progress_text_changed);
-    connect(this, &SimilarImagesFinder::signal_progress_closed,
-            this, &SimilarImagesFinder::slot_progress_closed);
-    connect(this, &SimilarImagesFinder::signal_item_added,
-            this, &SimilarImagesFinder::slot_item_added);
+    setup_connections();
 }
 
 SimilarImagesFinder::~SimilarImagesFinder()
@@ -96,15 +88,8 @@ void SimilarImagesFinder::slot_browse_clicked()
 void SimilarImagesFinder::slot_scan_clicked()
 {
     setEnabled(false);
-    ui->list->clear();
-    ui->image->clear();
-    ui->info->clear();
-    progress_dialog = new QProgressDialog(this);
-    progress_dialog->setWindowTitle("Scan is in progress");
-    progress_dialog->setWindowModality(Qt::WindowModal);
-    progress_dialog->setCancelButton(nullptr);
-    progress_dialog->setAttribute(Qt::WA_DeleteOnClose);
-    progress_dialog->open();
+    clear_ui();
+    init_progress_dialog();
     std::thread([this]()
     {
         build_similarities_list(get_similarity_clusters(get_hashes_pool()));
@@ -248,13 +233,7 @@ void SimilarImagesFinder::build_similarities_list(
         emit signal_progress_state_changed(i + 1, similarity_clusters.size());
         emit signal_item_added(get_blank_item());
         for (const auto &image_data : similarity_clusters.at(i))
-        {
-            QListWidgetItem *item = new QListWidgetItem;
-            item->setIcon(QIcon(QPixmap::fromImage(get_image_icon(image_data->filename))));
-            item->setText(image_data->filename);
-            item->setCheckState(Qt::Unchecked);
-            emit signal_item_added(item);
-        }
+            emit signal_item_added(get_item(image_data->filename));
     }
     emit signal_progress_closed();
 }
@@ -290,4 +269,43 @@ QString SimilarImagesFinder::get_current_item_info() const
             "Created: " + file_info.created().toString() + "\n" +
             "Last modified: " + file_info.lastModified().toString();
     return info_string;
+}
+
+void SimilarImagesFinder::init_progress_dialog()
+{
+    progress_dialog = new QProgressDialog(this);
+    progress_dialog->setWindowTitle("Scan is in progress");
+    progress_dialog->setWindowModality(Qt::WindowModal);
+    progress_dialog->setCancelButton(nullptr);
+    progress_dialog->setAttribute(Qt::WA_DeleteOnClose);
+    progress_dialog->open();
+}
+
+void SimilarImagesFinder::clear_ui()
+{
+    ui->list->clear();
+    ui->image->clear();
+    ui->info->clear();
+}
+
+void SimilarImagesFinder::setup_connections()
+{
+    connect(ui->browse, &QPushButton::clicked,
+            this, &SimilarImagesFinder::slot_browse_clicked);
+    connect(ui->scan, &QPushButton::clicked,
+            this, &SimilarImagesFinder::slot_scan_clicked);
+    connect(ui->remove, &QPushButton::clicked,
+            this, &SimilarImagesFinder::slot_remove_clicked);
+    connect(ui->list, &QListWidget::currentItemChanged,
+            this, &SimilarImagesFinder::slot_list_currentItemChanged);
+    connect(ui->location, &QLineEdit::textChanged,
+            this, &SimilarImagesFinder::slot_location_textChanged);
+    connect(this, &SimilarImagesFinder::signal_progress_state_changed,
+            this, &SimilarImagesFinder::slot_progress_state_changed);
+    connect(this, &SimilarImagesFinder::signal_progress_text_changed,
+            this, &SimilarImagesFinder::slot_progress_text_changed);
+    connect(this, &SimilarImagesFinder::signal_progress_closed,
+            this, &SimilarImagesFinder::slot_progress_closed);
+    connect(this, &SimilarImagesFinder::signal_item_added,
+            this, &SimilarImagesFinder::slot_item_added);
 }
