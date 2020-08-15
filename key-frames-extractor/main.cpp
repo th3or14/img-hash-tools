@@ -1,26 +1,14 @@
 #include "key-frames-extractor.hpp"
 
-static void check_argc(int argc_given, int argc_expected)
-{
-    if (argc_given != argc_expected)
-    {
-        std::string err_msg = "Wrong number of arguments (given " +
-                std::to_string(argc_given - 1) + ", expected " +
-                std::to_string(argc_expected - 1) + ").";
-        throw std::runtime_error(err_msg);
-    }
-}
-
 int main(int argc, char *argv[])
 {
-    try
+    static const int expected_argc = 3;
+    if (argc != expected_argc)
     {
-        check_argc(argc, 3);
-    }
-    catch (const std::runtime_error &e)
-    {
-        std::cout << "Required arguments:\n\tinput video filename\n\toutput location\n";
-        throw;
+        std::cout << "Wrong number of arguments (given " + std::to_string(argc - 1) +
+                     ", expected " + std::to_string(expected_argc - 1) +
+                     ").\nRequired arguments:\n\tinput video filename\n\toutput location\n;";
+        return EXIT_FAILURE;
     }
     extract_key_frames(argv[1], argv[2]);
     return EXIT_SUCCESS;
