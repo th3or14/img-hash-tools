@@ -32,10 +32,10 @@ public:
     ~SimilarImagesFinder();
 
 signals:
-    void signal_progress_state_changed(double current, double total);
-    void signal_progress_text_changed(const QString &new_format);
+    void signal_progress_state_changed(double, double);
+    void signal_progress_text_changed(const QString &);
     void signal_progress_closed();
-    void signal_item_added(QListWidgetItem *item);
+    void signal_item_added(QListWidgetItem *);
 
 private slots:
     void slot_browse_clicked();
