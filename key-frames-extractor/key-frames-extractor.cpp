@@ -35,23 +35,22 @@ private:
 class KeyFramesExtractor
 {
 public:
-    KeyFramesExtractor(const std::string &input_video_filename,
-                       const std::string &output_location);
+    KeyFramesExtractor(const QString &input_video_filename,
+                       const QString &key_frames_directory);
     void locate_key_frames();
     void extract_key_frames();
-    std::string get_key_frames_directory() const;
 
 private:
-    const std::string input_video_filename;
-    const std::string output_location;
-    const QString timestamp_format;
-    const QString datetimestamp_format;
-    const std::string key_frames_directory;
+    QString input_video_filename;
+    QString key_frames_directory;
     cv::VideoCapture cap;
     std::vector<size_t> key_frame_nums;
 };
 
 } // namespace
+
+static const QString timestamp_format("HH-mm-ss-zzz");
+static const QString datetimestamp_format("yyyy-MM-ddT" + timestamp_format);
 
 template <typename T>
 static bool get_thresholding_predicate(double hashes_diff);
@@ -87,28 +86,28 @@ static std::unique_ptr<HashHandler> get_hash_handler()
     return std::make_unique<HashHandler>(T::create(), get_thresholding_predicate<T>);
 }
 
-static void check_file_exists(const std::string &path)
+static void check_file_exists(const QString &path)
 {
-    if (!QFile(QString::fromStdString(path)).exists())
-        throw std::runtime_error("File '" + path + "' does not exist.");
+    if (!QFile(path).exists())
+        throw std::runtime_error("File '" + path.toStdString() + "' does not exist.");
 }
 
-static void check_directory_exists(const std::string &path)
+static void check_directory_exists(const QString &path)
 {
-    if (!QDir(QString::fromStdString(path)).exists())
-        throw std::runtime_error("Directory '" + path + "' does not exist.");
+    if (!QDir(path).exists())
+        throw std::runtime_error("Directory '" + path.toStdString() + "' does not exist.");
 }
 
-static void try_create_directory(const std::string &path)
+static void try_create_directory(const QString &path)
 {
-    if (!QDir().mkdir(QString::fromStdString(path)))
-        throw std::runtime_error("Unable to create directory '" + path + "'.");
+    if (!QDir().mkdir(path))
+        throw std::runtime_error("Unable to create directory '" + path.toStdString() + "'.");
 }
 
-static void try_open_video(cv::VideoCapture &vc, const std::string &path)
+static void try_open_video(cv::VideoCapture &vc, const QString &path)
 {
-    if (!vc.open(path))
-        throw std::runtime_error("Unable to open '" + path +
+    if (!vc.open(path.toStdString()))
+        throw std::runtime_error("Unable to open '" + path.toStdString() +
                                  "'. Not a video or video format is not supproted.");
 }
 
@@ -153,13 +152,9 @@ void PercentPrinter::print_if_percent_changed(double current, double total,
     }
 }
 
-KeyFramesExtractor::KeyFramesExtractor(const std::string &input_video_filename,
-                                       const std::string &output_location) :
-    input_video_filename(input_video_filename), output_location(output_location),
-    timestamp_format("HH-mm-ss-zzz"), datetimestamp_format("yyyy-MM-ddT" + timestamp_format),
-    key_frames_directory(output_location + "/" +
-                         QDateTime::currentDateTime().toString(datetimestamp_format).toStdString())
-{}
+KeyFramesExtractor::KeyFramesExtractor(const QString &input_video_filename,
+                                       const QString &key_frames_directory) :
+    input_video_filename(input_video_filename), key_frames_directory(key_frames_directory) {}
 
 void KeyFramesExtractor::locate_key_frames()
 {
@@ -212,9 +207,9 @@ void KeyFramesExtractor::extract_key_frames()
             throw std::runtime_error("Error: reached end of video before end of extraction.");
         cv::Mat curr_frame;
         cap.retrieve(curr_frame);
-        cv::imwrite(key_frames_directory + "/" + QTime::fromMSecsSinceStartOfDay(
-                        cap.get(cv::CAP_PROP_POS_MSEC)).toString(
-                        timestamp_format).toStdString() + ".jpg", curr_frame);
+        QString key_frame_filename = key_frames_directory + "/" + QTime::fromMSecsSinceStartOfDay(
+                    cap.get(cv::CAP_PROP_POS_MSEC)).toString(timestamp_format) + ".jpg";
+        cv::imwrite(key_frame_filename.toStdString(), curr_frame);
         printer.print_if_percent_changed(i + 1, key_frame_nums.size(),
                                          "\rExtracting key frames (stage 2 of 2)... ", "%");
     }
@@ -222,18 +217,15 @@ void KeyFramesExtractor::extract_key_frames()
     std::cout << "\n";
 }
 
-std::string KeyFramesExtractor::get_key_frames_directory() const
-{
-    return key_frames_directory;
-}
-
-void extract_key_frames(const std::string &input_video_filename,
-                        const std::string &output_location)
+void extract_key_frames(const QString &input_video_filename,
+                        const QString &output_location)
 {
     check_file_exists(input_video_filename);
     check_directory_exists(output_location);
-    KeyFramesExtractor kfe(input_video_filename, output_location);
-    try_create_directory(kfe.get_key_frames_directory());
+    QString key_frames_directory(output_location + "/" +
+                                 QDateTime::currentDateTime().toString(datetimestamp_format));
+    try_create_directory(key_frames_directory);
+    KeyFramesExtractor kfe(input_video_filename, key_frames_directory);
     kfe.locate_key_frames();
     kfe.extract_key_frames();
 }

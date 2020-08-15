@@ -8,7 +8,7 @@
 #include <QTime>
 #include <QDir>
 
-void extract_key_frames(const std::string &input_video_filename,
-                        const std::string &output_location);
+void extract_key_frames(const QString &input_video_filename,
+                        const QString &output_location);
 
 #endif // KEY_FRAMES_EXTRACTOR_HPP
