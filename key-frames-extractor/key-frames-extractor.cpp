@@ -122,16 +122,17 @@ CombinedHashHandler::CombinedHashHandler() :
 
 bool CombinedHashHandler::eval_comparison(CombinedHash &a, CombinedHash &b)
 {
-    if (a.img.empty() || b.img.empty())
-        throw std::logic_error("Evaluating comparison is forbidden: empty image.");
-    a.hashes.resize(handlers.size());
-    b.hashes.resize(handlers.size());
+    std::array<CombinedHash *, 2> a_and_b = {&a, &b};
+    for (auto combined_hash : a_and_b)
+        if (combined_hash->img.empty())
+            throw std::logic_error("Evaluating comparison is forbidden: empty image.");
+    for (auto combined_hash : a_and_b)
+        combined_hash->hashes.resize(handlers.size());
     for (size_t i = 0; i < handlers.size(); ++i)
     {
-        if (a.hashes.at(i).empty())
-            a.hashes.at(i) = handlers.at(i)->compute(a.img);
-        if (b.hashes.at(i).empty())
-            b.hashes.at(i) = handlers.at(i)->compute(b.img);
+        for (auto combined_hash : a_and_b)
+            if (combined_hash->hashes.at(i).empty())
+                combined_hash->hashes.at(i) = handlers.at(i)->compute(combined_hash->img);
         if (handlers.at(i)->compare(a.hashes.at(i), b.hashes.at(i)))
             return true;
     }
