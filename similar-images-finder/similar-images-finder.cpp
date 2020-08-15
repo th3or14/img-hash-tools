@@ -56,9 +56,7 @@ static QListWidgetItem *get_item(const QString &filename)
 ImageData::ImageData(const cv::Mat &hash, const QString &filename) :
     hash(hash), filename(filename) {}
 
-SimilarImagesFinder::SimilarImagesFinder(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::Widget),
+SimilarImagesFinder::SimilarImagesFinder() : QWidget(), ui(new Ui::Widget),
     hash_handler(cv::img_hash::PHash::create(), [](double hashes_diff) -> bool
     {
         return hashes_diff <= 5;

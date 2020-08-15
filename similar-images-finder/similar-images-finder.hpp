@@ -28,7 +28,7 @@ class SimilarImagesFinder : public QWidget
     Q_OBJECT
 
 public:
-    explicit SimilarImagesFinder(QWidget *parent = 0);
+    SimilarImagesFinder();
     ~SimilarImagesFinder();
 
 signals:
