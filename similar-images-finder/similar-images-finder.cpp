@@ -1,5 +1,5 @@
 #include "similar-images-finder.hpp"
-#include "ui_similar-images-finder.h"
+#include "ui_widget.h"
 
 struct ImageData
 {
