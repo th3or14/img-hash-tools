@@ -83,7 +83,7 @@ void SimilarImagesFinder::slot_browse_clicked()
         ui->location->setText(directory);
 }
 
-void SimilarImagesFinder::slot_scan_clicked()
+void SimilarImagesFinder::slot_scan_started()
 {
     setEnabled(false);
     clear_ui();
@@ -121,7 +121,7 @@ void SimilarImagesFinder::slot_remove_clicked()
     remove_adjucent_blank_items();
 }
 
-void SimilarImagesFinder::slot_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *)
+void SimilarImagesFinder::slot_list_current_item_changed(QListWidgetItem *, QListWidgetItem *)
 {
     if (ui->list->currentRow() == -1)
         return;
@@ -131,26 +131,25 @@ void SimilarImagesFinder::slot_list_currentItemChanged(QListWidgetItem *, QListW
     ui->info->setText(get_current_item_info());
 }
 
-void SimilarImagesFinder::slot_location_textChanged()
+void SimilarImagesFinder::slot_location_text_changed()
 {
     ui->scan->setEnabled(!ui->location->text().isEmpty() && QDir(ui->location->text()).exists());
 }
 
-void SimilarImagesFinder::slot_progress_state_changed(double current, double total)
+void SimilarImagesFinder::slot_scan_stage_iteration_completed(double current, double total)
 {
     progress_dialog->setValue(current / total * 100);
 }
 
-void SimilarImagesFinder::slot_progress_text_changed(const QString &text)
+void SimilarImagesFinder::slot_scan_stage_started(const QString &text)
 {
     progress_dialog->setLabelText(text);
     progress_dialog->setValue(0);
 }
 
-void SimilarImagesFinder::slot_progress_closed()
+void SimilarImagesFinder::slot_scan_finished()
 {
-    progress_dialog->close();
-    progress_dialog = nullptr;
+    deinit_progress_dialog();
     setEnabled(true);
 }
 
@@ -161,9 +160,8 @@ void SimilarImagesFinder::slot_item_added(QListWidgetItem *item)
 
 HashesPool SimilarImagesFinder::get_hashes_pool()
 {
-    emit signal_progress_text_changed("Building hashes pool (stage 1 of 3)...");
-    auto init_dir_it =
-            [path = ui->location->text()]() -> std::unique_ptr<QDirIterator>
+    emit signal_scan_stage_started("Building hashes pool (stage 1 of 3)...");
+    auto init_dir_it = [path = ui->location->text()]() -> std::unique_ptr<QDirIterator>
     {
         return std::make_unique<QDirIterator>(path,
                                               QStringList() << "*.jpg" << "*.jpeg" << "*.png"
@@ -175,7 +173,7 @@ HashesPool SimilarImagesFinder::get_hashes_pool()
     HashesPool hashes_pool;
     for (size_t files_scanned = 0; dir_it->hasNext(); ++files_scanned)
     {
-        emit signal_progress_state_changed(files_scanned + 1, files_cnt);
+        emit signal_scan_stage_iteration_completed(files_scanned + 1, files_cnt);
         dir_it->next();
         cv::Mat img;
         try
@@ -198,11 +196,11 @@ HashesPool SimilarImagesFinder::get_hashes_pool()
 std::vector<SimilarityCluster> SimilarImagesFinder::get_similarity_clusters(
         HashesPool &&hashes_pool)
 {
-    emit signal_progress_text_changed("Building similarity clusters (stage 2 of 3)...");
+    emit signal_scan_stage_started("Building similarity clusters (stage 2 of 3)...");
     std::vector<SimilarityCluster> similarity_clusters;
     for (size_t i = 0; i < hashes_pool.size(); ++i)
     {
-        emit signal_progress_state_changed(i + 1, hashes_pool.size());
+        emit signal_scan_stage_iteration_completed(i + 1, hashes_pool.size());
         if (hashes_pool.at(i) == nullptr)
             continue;
         SimilarityCluster similarity_cluster;
@@ -225,15 +223,15 @@ std::vector<SimilarityCluster> SimilarImagesFinder::get_similarity_clusters(
 void SimilarImagesFinder::build_similarities_list(
         const std::vector<SimilarityCluster> &similarity_clusters)
 {
-    emit signal_progress_text_changed("Building similarities list (stage 3 of 3)...");
+    emit signal_scan_stage_started("Building similarities list (stage 3 of 3)...");
     for (size_t i = 0; i < similarity_clusters.size(); ++i)
     {
-        emit signal_progress_state_changed(i + 1, similarity_clusters.size());
+        emit signal_scan_stage_iteration_completed(i + 1, similarity_clusters.size());
         emit signal_item_added(get_blank_item());
         for (const auto &image_data : similarity_clusters.at(i))
             emit signal_item_added(get_item(image_data->filename));
     }
-    emit signal_progress_closed();
+    emit signal_scan_finished();
 }
 
 void SimilarImagesFinder::resize_relatively_to_screen_size(double width_multiplier,
@@ -279,6 +277,12 @@ void SimilarImagesFinder::init_progress_dialog()
     progress_dialog->open();
 }
 
+void SimilarImagesFinder::deinit_progress_dialog()
+{
+    progress_dialog->close();
+    progress_dialog = nullptr;
+}
+
 void SimilarImagesFinder::clear_ui()
 {
     ui->list->clear();
@@ -291,19 +295,19 @@ void SimilarImagesFinder::setup_connections()
     connect(ui->browse, &QPushButton::clicked,
             this, &SimilarImagesFinder::slot_browse_clicked);
     connect(ui->scan, &QPushButton::clicked,
-            this, &SimilarImagesFinder::slot_scan_clicked);
+            this, &SimilarImagesFinder::slot_scan_started);
     connect(ui->remove, &QPushButton::clicked,
             this, &SimilarImagesFinder::slot_remove_clicked);
     connect(ui->list, &QListWidget::currentItemChanged,
-            this, &SimilarImagesFinder::slot_list_currentItemChanged);
+            this, &SimilarImagesFinder::slot_list_current_item_changed);
     connect(ui->location, &QLineEdit::textChanged,
-            this, &SimilarImagesFinder::slot_location_textChanged);
-    connect(this, &SimilarImagesFinder::signal_progress_state_changed,
-            this, &SimilarImagesFinder::slot_progress_state_changed);
-    connect(this, &SimilarImagesFinder::signal_progress_text_changed,
-            this, &SimilarImagesFinder::slot_progress_text_changed);
-    connect(this, &SimilarImagesFinder::signal_progress_closed,
-            this, &SimilarImagesFinder::slot_progress_closed);
+            this, &SimilarImagesFinder::slot_location_text_changed);
+    connect(this, &SimilarImagesFinder::signal_scan_stage_iteration_completed,
+            this, &SimilarImagesFinder::slot_scan_stage_iteration_completed);
+    connect(this, &SimilarImagesFinder::signal_scan_stage_started,
+            this, &SimilarImagesFinder::slot_scan_stage_started);
+    connect(this, &SimilarImagesFinder::signal_scan_finished,
+            this, &SimilarImagesFinder::slot_scan_finished);
     connect(this, &SimilarImagesFinder::signal_item_added,
             this, &SimilarImagesFinder::slot_item_added);
 }

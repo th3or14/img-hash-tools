@@ -45,7 +45,7 @@ private:
 
 } // namespace
 
-static const QString timestamp_format("HH-mm-ss-zzz");
+static const QString timestamp_format = "HH-mm-ss-zzz";
 
 template <typename T>
 static bool get_thresholding_predicate(double hashes_diff);
@@ -212,7 +212,7 @@ void extract_key_frames(const QString &input_video_filename, const QString &outp
 {
     check_file_exists(input_video_filename);
     check_directory_exists(output_location);
-    static const QString datetimestamp_format("yyyy-MM-ddT" + timestamp_format);
+    static const QString datetimestamp_format = "yyyy-MM-ddT" + timestamp_format;
     QString key_frames_directory(output_location + "/" +
                                  QDateTime::currentDateTime().toString(datetimestamp_format));
     try_create_directory(key_frames_directory);

@@ -32,20 +32,20 @@ public:
     ~SimilarImagesFinder();
 
 signals:
-    void signal_progress_state_changed(double, double);
-    void signal_progress_text_changed(const QString &);
-    void signal_progress_closed();
+    void signal_scan_stage_iteration_completed(double, double);
+    void signal_scan_stage_started(const QString &);
+    void signal_scan_finished();
     void signal_item_added(QListWidgetItem *);
 
 private slots:
     void slot_browse_clicked();
-    void slot_scan_clicked();
+    void slot_scan_started();
     void slot_remove_clicked();
-    void slot_list_currentItemChanged(QListWidgetItem *, QListWidgetItem *);
-    void slot_location_textChanged();
-    void slot_progress_state_changed(double current, double total);
-    void slot_progress_text_changed(const QString &text);
-    void slot_progress_closed();
+    void slot_list_current_item_changed(QListWidgetItem *, QListWidgetItem *);
+    void slot_location_text_changed();
+    void slot_scan_stage_iteration_completed(double current, double total);
+    void slot_scan_stage_started(const QString &text);
+    void slot_scan_finished();
     void slot_item_added(QListWidgetItem *item);
 
 private:
@@ -57,6 +57,7 @@ private:
     QImage get_current_item_thumbnail() const;
     QString get_current_item_info() const;
     void init_progress_dialog();
+    void deinit_progress_dialog();
     void clear_ui();
     void setup_connections();
 
