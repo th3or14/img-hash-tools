@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
     QApplication a(argc, argv);
-    SimilarImagesFinder w;
-    w.show();
+    SimilarImagesFinder sif;
+    sif.show();
     return a.exec();
 }
