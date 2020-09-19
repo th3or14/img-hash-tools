@@ -32,6 +32,17 @@ private:
     int displayed_percent;
 };
 
+class BorderFramesLocator
+{
+public:
+    BorderFramesLocator();
+    bool compare_next_frame(const cv::Mat &frame);
+
+private:
+    CombinedHashHandler combined_hash_handler;
+    std::unique_ptr<CombinedHash> prev_hash;
+};
+
 class KeyFramesExtractor
 {
 public:
@@ -147,6 +158,17 @@ void PercentPrinter::print_if_percent_changed(double current, double total,
     }
 }
 
+BorderFramesLocator::BorderFramesLocator() : prev_hash(nullptr) {}
+
+bool BorderFramesLocator::compare_next_frame(const cv::Mat &frame)
+{
+    std::unique_ptr<CombinedHash> curr_hash = std::make_unique<CombinedHash>(frame);
+    bool res = (prev_hash != nullptr) &&
+            !combined_hash_handler.eval_comparison(*curr_hash, *prev_hash);
+    prev_hash = std::move(curr_hash);
+    return res;
+}
+
 void KeyFramesExtractor::locate_key_frames(const QString &input_video_filename)
 {
     key_frame_nums.clear();
@@ -156,8 +178,7 @@ void KeyFramesExtractor::locate_key_frames(const QString &input_video_filename)
         throw std::runtime_error("Found no frames to process.");
     std::cout << "Found " << frames_cnt << " frames to process.\n";
     PercentPrinter printer;
-    CombinedHashHandler hash_handler;
-    std::unique_ptr<CombinedHash> prev_hash = nullptr;
+    BorderFramesLocator bfl;
     std::vector<size_t> borders = {0};
     for (size_t i = 0; i < frames_cnt; ++i)
     {
@@ -168,10 +189,8 @@ void KeyFramesExtractor::locate_key_frames(const QString &input_video_filename)
         }
         cv::Mat frame;
         cap.retrieve(frame);
-        std::unique_ptr<CombinedHash> curr_hash = std::make_unique<CombinedHash>(frame);
-        if ((prev_hash != nullptr) && !hash_handler.eval_comparison(*curr_hash, *prev_hash))
+        if (bfl.compare_next_frame(frame))
             borders.push_back(i);
-        prev_hash = std::move(curr_hash);
         printer.print_if_percent_changed(i + 1, frames_cnt,
                                          "\rLocating key frames (stage 1 of 2)... ", "%");
     }
