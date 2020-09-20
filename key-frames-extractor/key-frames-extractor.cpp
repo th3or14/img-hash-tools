@@ -189,7 +189,9 @@ void KeyFramesExtractor::locate_key_frames(const QString &input_video_filename)
         }
         cv::Mat frame;
         cap.retrieve(frame);
-        if (bfl.compare_next_frame(frame))
+        cv::Mat resized_frame;
+        cv::resize(frame, resized_frame, cv::Size(32, 32));
+        if (bfl.compare_next_frame(resized_frame))
             borders.push_back(i);
         printer.print_if_percent_changed(i + 1, frames_cnt,
                                          "\rLocating key frames (stage 1 of 2)... ", "%");
