@@ -180,6 +180,12 @@ void KeyFramesExtractor::locate_key_frames(const QString &input_video_filename)
     PercentPrinter printer;
     BorderFramesLocator bfl;
     std::vector<size_t> borders = {0};
+    auto prepare_for_hashing = [](const cv::Mat &src) -> cv::Mat
+    {
+        cv::Mat res;
+        cv::resize(src, res, cv::Size(32, 32));
+        return res;
+    };
     for (size_t i = 0; i < frames_cnt; ++i)
     {
         if (!cap.grab())
@@ -189,9 +195,7 @@ void KeyFramesExtractor::locate_key_frames(const QString &input_video_filename)
         }
         cv::Mat frame;
         cap.retrieve(frame);
-        cv::Mat resized_frame;
-        cv::resize(frame, resized_frame, cv::Size(32, 32));
-        if (bfl.compare_next_frame(resized_frame))
+        if (bfl.compare_next_frame(prepare_for_hashing(frame)))
             borders.push_back(i);
         printer.print_if_percent_changed(i + 1, frames_cnt,
                                          "\rLocating key frames (stage 1 of 2)... ", "%");
