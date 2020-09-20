@@ -2,10 +2,12 @@
 
 namespace {
 
+static const size_t hashes_cnt = 4;
+
 struct CombinedHash
 {
     cv::Mat img;
-    std::vector<cv::Mat> hashes;
+    std::array<cv::Mat, hashes_cnt> hashes;
 
     explicit CombinedHash(const cv::Mat &img);
 };
@@ -17,7 +19,7 @@ public:
     bool eval_comparison(CombinedHash &a, CombinedHash &b);
 
 private:
-    std::array<std::unique_ptr<HashHandler>, 4> handlers;
+    std::array<std::unique_ptr<HashHandler>, hashes_cnt> handlers;
 };
 
 class PercentPrinter
@@ -131,8 +133,6 @@ bool CombinedHashHandler::eval_comparison(CombinedHash &a, CombinedHash &b)
     for (auto combined_hash : a_and_b)
         if (combined_hash->img.empty())
             throw std::logic_error("Evaluating comparison is forbidden: empty image.");
-    for (auto combined_hash : a_and_b)
-        combined_hash->hashes.resize(handlers.size());
     for (size_t i = 0; i < handlers.size(); ++i)
     {
         for (auto combined_hash : a_and_b)
