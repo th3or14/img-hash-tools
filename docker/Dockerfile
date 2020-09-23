@@ -1,6 +1,5 @@
 FROM ubuntu:16.04
 
-# install dependencies from packages
 RUN apt-get update && apt-get install -y wget unzip cmake build-essential libfontconfig libdbus-1-3 '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libavcodec-dev libavformat-dev libswscale-dev libavresample-dev libgtk2.0-dev qtbase5-dev qt5-qmake && \
 wget -O opencv-4.2.0.tar.gz https://codeload.github.com/opencv/opencv/tar.gz/4.2.0 && tar -xf opencv-4.2.0.tar.gz && rm opencv-4.2.0.tar.gz && \
 wget -O opencv_contrib-4.2.0.tar.gz https://codeload.github.com/opencv/opencv_contrib/tar.gz/4.2.0 && tar -xf opencv_contrib-4.2.0.tar.gz && rm opencv_contrib-4.2.0.tar.gz && \
