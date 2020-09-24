@@ -28,5 +28,6 @@ mkdir build && \
 cd build && \
 cmake .. '-GCodeBlocks - Unix Makefiles' -DCMAKE_CXX_COMPILER:STRING=$(which g++) -DCMAKE_C_COMPILER:STRING=$(which gcc) -DCMAKE_PREFIX_PATH:STRING=$(which gcc) -DQT_QMAKE_EXECUTABLE:STRING=$(which qmake) && \
 make -j $(nproc --all) && \
-ln -s /img-hash-tools/build/similar-images-finder/similar-images-finder /similar-images-finder && \
-ln -s /img-hash-tools/build/key-frames-extractor/key-frames-extractor /key-frames-extractor
+cd ../.. && \
+ln -s img-hash-tools/build/similar-images-finder/similar-images-finder similar-images-finder && \
+ln -s img-hash-tools/build/key-frames-extractor/key-frames-extractor key-frames-extractor
