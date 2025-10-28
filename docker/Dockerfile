@@ -1,9 +1,9 @@
-FROM ubuntu:16.04
+FROM ubuntu:24.04
 
-ARG BUILD_ARG_OPENCV_VERSION=4.2.0
+ARG BUILD_ARG_OPENCV_VERSION=4.12.0
 
 RUN apt-get update && \
-apt-get install -y wget unzip cmake build-essential libfontconfig libdbus-1-3 '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libavcodec-dev libavformat-dev libswscale-dev libavresample-dev libgtk2.0-dev qtbase5-dev qt5-qmake && \
+apt-get install -y wget unzip cmake build-essential libfontconfig libdbus-1-3 '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libavcodec-dev libavformat-dev libswscale-dev libgtk2.0-dev qtbase5-dev qt5-qmake && \
 wget -O opencv-$BUILD_ARG_OPENCV_VERSION.tar.gz https://codeload.github.com/opencv/opencv/tar.gz/$BUILD_ARG_OPENCV_VERSION && \
 tar -xf opencv-$BUILD_ARG_OPENCV_VERSION.tar.gz && \
 rm opencv-$BUILD_ARG_OPENCV_VERSION.tar.gz && \
