@@ -3,7 +3,7 @@ FROM ubuntu:24.04
 ARG BUILD_ARG_OPENCV_VERSION=4.12.0
 
 RUN apt-get update && \
-apt-get install -y wget unzip cmake build-essential libfontconfig libdbus-1-3 '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libavcodec-dev libavformat-dev libswscale-dev libgtk2.0-dev qtbase5-dev qt5-qmake && \
+apt-get install -y wget unzip cmake build-essential libfontconfig libdbus-1-3 '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libavcodec-dev libavformat-dev libswscale-dev libgtk2.0-dev qt6-base-dev qmake6 && \
 wget -O opencv-$BUILD_ARG_OPENCV_VERSION.tar.gz https://codeload.github.com/opencv/opencv/tar.gz/$BUILD_ARG_OPENCV_VERSION && \
 tar -xf opencv-$BUILD_ARG_OPENCV_VERSION.tar.gz && \
 rm opencv-$BUILD_ARG_OPENCV_VERSION.tar.gz && \
@@ -28,7 +28,7 @@ mv img-hash-tools-master img-hash-tools && \
 cd img-hash-tools && \
 mkdir build && \
 cd build && \
-cmake .. '-GCodeBlocks - Unix Makefiles' -DCMAKE_CXX_COMPILER:STRING=$(which g++) -DCMAKE_C_COMPILER:STRING=$(which gcc) -DCMAKE_PREFIX_PATH:STRING=$(which gcc) -DQT_QMAKE_EXECUTABLE:STRING=$(which qmake) && \
+cmake .. '-GCodeBlocks - Unix Makefiles' -DCMAKE_CXX_COMPILER:STRING=$(which g++) -DCMAKE_C_COMPILER:STRING=$(which gcc) -DCMAKE_PREFIX_PATH:STRING=$(which gcc) && \
 make -j $(nproc --all) && \
 cd ../.. && \
 ln -s img-hash-tools/build/similar-images-finder/similar-images-finder similar-images-finder && \
