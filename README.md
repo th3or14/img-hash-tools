@@ -20,7 +20,7 @@ Helps to remove duplicates and almost duplicates from a specified pictures colle
 
 ## Requirements
 
-* CMake
+* CMake 3.7+
 
 * A C++14 compliant compiler
 
