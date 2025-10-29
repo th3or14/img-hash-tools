@@ -26,7 +26,7 @@ Helps to remove duplicates and almost duplicates from a specified pictures colle
 
 * OpenCV compiled with FFmpeg and extra module img_hash
 
-* Qt
+* Qt 6
 
 ## Building
 
