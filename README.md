@@ -1,3 +1,5 @@
+[![Docker Image CI](https://github.com/th3or14/img-hash-tools/actions/workflows/docker-image.yml/badge.svg)](https://github.com/th3or14/img-hash-tools/actions/workflows/docker-image.yml)
+
 ## Description
 
 #### Key frames extractor
