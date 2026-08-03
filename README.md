@@ -24,7 +24,7 @@ Helps to remove duplicates and almost duplicates from a specified pictures colle
 
 * CMake 3.7+
 
-* A C++14 compliant compiler
+* A C++17 compliant compiler
 
 * OpenCV compiled with FFmpeg and extra module img_hash
 
