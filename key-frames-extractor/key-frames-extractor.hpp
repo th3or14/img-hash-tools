@@ -5,12 +5,11 @@
 
 #include <iostream>
 
-#include <QTime>
 #include <QDir>
+#include <QTime>
 
 #include <opencv2/imgproc.hpp>
 
-void extract_key_frames(const QString &input_video_filename,
-                        const QString &output_location);
+void extract_key_frames(const QString &input_video_filename, const QString &output_location);
 
 #endif // KEY_FRAMES_EXTRACTOR_HPP

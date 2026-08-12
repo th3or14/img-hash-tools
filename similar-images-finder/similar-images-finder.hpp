@@ -3,15 +3,15 @@
 
 #include <hash-handler/hash-handler.hpp>
 
-#include <QImage>
-#include <QDirIterator>
-#include <QDebug>
 #include <QDateTime>
-#include <QScreen>
+#include <QDebug>
+#include <QDirIterator>
 #include <QFileDialog>
-#include <QMessageBox>
+#include <QImage>
 #include <QListWidget>
+#include <QMessageBox>
 #include <QProgressDialog>
+#include <QScreen>
 
 #include <thread>
 
@@ -23,8 +23,7 @@ struct ImageData;
 
 typedef std::vector<std::unique_ptr<ImageData>> HashesPool, SimilarityCluster;
 
-class SimilarImagesFinder : public QWidget
-{
+class SimilarImagesFinder : public QWidget {
     Q_OBJECT
 
 public:

@@ -4,11 +4,10 @@
 #include <memory>
 #include <queue>
 
-#include <opencv2/img_hash.hpp>
 #include <opencv2/highgui.hpp>
+#include <opencv2/img_hash.hpp>
 
-class HashHandler
-{
+class HashHandler {
 public:
     HashHandler(const cv::Ptr<cv::img_hash::ImgHashBase> &hash_algorithm,
                 const std::function<bool(double)> &thresholding_predicate);
