@@ -22,7 +22,8 @@ static QString format_file_size(qlonglong bytes) {
 }
 
 static QImage get_image_icon(const QString &image_name) {
-    return QImage(image_name).scaled(QSize(32, 32), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    return QImage(image_name)
+        .scaled(QSize(32, 32), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
 static size_t get_files_cnt(std::unique_ptr<QDirIterator> dir_it) {
@@ -49,23 +50,19 @@ static QListWidgetItem *get_item(const QString &filename) {
 }
 
 ImageData::ImageData(const cv::Mat &hash, const QString &filename)
-    : hash(hash), filename(filename) {
-}
+    : hash(hash), filename(filename) {}
 
 SimilarImagesFinder::SimilarImagesFinder()
-    : QWidget(), ui(new Ui::Widget), hash_handler(cv::img_hash::PHash::create(),
-                                                  [](double hashes_diff) -> bool {
-                                                      return hashes_diff <= 5;
-                                                  }),
+    : QWidget(), ui(new Ui::Widget),
+      hash_handler(cv::img_hash::PHash::create(),
+                   [](double hashes_diff) -> bool { return hashes_diff <= 5; }),
       progress_dialog(nullptr) {
     ui->setupUi(this);
     resize_relatively_to_screen_size(0.8, 0.8);
     setup_connections();
 }
 
-SimilarImagesFinder::~SimilarImagesFinder() {
-    delete ui;
-}
+SimilarImagesFinder::~SimilarImagesFinder() { delete ui; }
 
 void SimilarImagesFinder::slot_browse_clicked() {
     QString directory = QFileDialog::getExistingDirectory(
@@ -99,11 +96,12 @@ void SimilarImagesFinder::slot_remove_clicked() {
     if (items_to_remove.empty()) {
         return;
     }
-    if (QMessageBox::question(this, "Attention",
-                              QString::number(items_to_remove.size()) +
-                                  " checked images will be permanently removed.\n"
-                                  "Are you sure you want to proceed?",
-                              QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) {
+    if (QMessageBox::question(
+            this, "Attention",
+            QString::number(items_to_remove.size()) +
+                " checked images will be permanently removed.\n"
+                "Are you sure you want to proceed?",
+            QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) {
         return;
     }
     for (auto item : items_to_remove) {
@@ -114,7 +112,8 @@ void SimilarImagesFinder::slot_remove_clicked() {
     remove_adjucent_blank_items();
 }
 
-void SimilarImagesFinder::slot_list_current_item_changed(QListWidgetItem *, QListWidgetItem *) {
+void SimilarImagesFinder::slot_list_current_item_changed(QListWidgetItem *,
+                                                         QListWidgetItem *) {
     if (ui->list->currentRow() == -1) {
         return;
     }
@@ -125,10 +124,12 @@ void SimilarImagesFinder::slot_list_current_item_changed(QListWidgetItem *, QLis
 }
 
 void SimilarImagesFinder::slot_location_text_changed() {
-    ui->scan->setEnabled(!ui->location->text().isEmpty() && QDir(ui->location->text()).exists());
+    ui->scan->setEnabled(!ui->location->text().isEmpty() &&
+                         QDir(ui->location->text()).exists());
 }
 
-void SimilarImagesFinder::slot_scan_stage_iteration_completed(double current, double total) {
+void SimilarImagesFinder::slot_scan_stage_iteration_completed(double current,
+                                                              double total) {
     progress_dialog->setValue(current / total * 100);
 }
 
@@ -148,37 +149,42 @@ void SimilarImagesFinder::slot_item_added(QListWidgetItem *item) {
 
 HashesPool SimilarImagesFinder::get_hashes_pool() {
     emit signal_scan_stage_started("Building hashes pool (stage 1 of 3)...");
-    auto init_dir_it = [path = ui->location->text()]() -> std::unique_ptr<QDirIterator> {
-        return std::make_unique<QDirIterator>(path,
-                                              QStringList() << "*.jpg" << "*.jpeg" << "*.png"
-                                                            << "*.tiff" << "*.tif",
-                                              QDir::Files, QDirIterator::Subdirectories);
+    auto init_dir_it =
+        [path = ui->location->text()]() -> std::unique_ptr<QDirIterator> {
+        return std::make_unique<QDirIterator>(
+            path,
+            QStringList() << "*.jpg" << "*.jpeg" << "*.png"
+                          << "*.tiff" << "*.tif",
+            QDir::Files, QDirIterator::Subdirectories);
     };
     size_t files_cnt = get_files_cnt(init_dir_it());
     std::unique_ptr<QDirIterator> dir_it = init_dir_it();
     HashesPool hashes_pool;
     for (size_t files_scanned = 0; dir_it->hasNext(); ++files_scanned) {
-        emit signal_scan_stage_iteration_completed(files_scanned + 1, files_cnt);
+        emit signal_scan_stage_iteration_completed(files_scanned + 1,
+                                                   files_cnt);
         dir_it->next();
         cv::Mat img;
         try {
             img = cv::imread(dir_it->filePath().toStdString());
             if (img.empty()) {
-                throw std::runtime_error("Empty image " + dir_it->filePath().toStdString());
+                throw std::runtime_error("Empty image " +
+                                         dir_it->filePath().toStdString());
             }
         } catch (const std::runtime_error &e) {
             qDebug() << e.what();
             continue;
         }
-        hashes_pool.push_back(
-            std::make_unique<ImageData>(hash_handler.compute(img), dir_it->filePath()));
+        hashes_pool.push_back(std::make_unique<ImageData>(
+            hash_handler.compute(img), dir_it->filePath()));
     }
     return hashes_pool;
 }
 
 std::vector<SimilarityCluster>
 SimilarImagesFinder::get_similarity_clusters(HashesPool &&hashes_pool) {
-    emit signal_scan_stage_started("Building similarity clusters (stage 2 of 3)...");
+    emit signal_scan_stage_started(
+        "Building similarity clusters (stage 2 of 3)...");
     std::vector<SimilarityCluster> similarity_clusters;
     for (size_t i = 0; i < hashes_pool.size(); ++i) {
         emit signal_scan_stage_iteration_completed(i + 1, hashes_pool.size());
@@ -190,7 +196,8 @@ SimilarImagesFinder::get_similarity_clusters(HashesPool &&hashes_pool) {
             if (hashes_pool.at(j) == nullptr) {
                 continue;
             }
-            if (hash_handler.compare(hashes_pool.at(i)->hash, hashes_pool.at(j)->hash)) {
+            if (hash_handler.compare(hashes_pool.at(i)->hash,
+                                     hashes_pool.at(j)->hash)) {
                 similarity_cluster.push_back(std::move(hashes_pool.at(j)));
             }
         }
@@ -204,9 +211,11 @@ SimilarImagesFinder::get_similarity_clusters(HashesPool &&hashes_pool) {
 
 void SimilarImagesFinder::build_similarities_list(
     const std::vector<SimilarityCluster> &similarity_clusters) {
-    emit signal_scan_stage_started("Building similarities list (stage 3 of 3)...");
+    emit signal_scan_stage_started(
+        "Building similarities list (stage 3 of 3)...");
     for (size_t i = 0; i < similarity_clusters.size(); ++i) {
-        emit signal_scan_stage_iteration_completed(i + 1, similarity_clusters.size());
+        emit signal_scan_stage_iteration_completed(i + 1,
+                                                   similarity_clusters.size());
         emit signal_item_added(get_blank_item());
         for (const auto &image_data : similarity_clusters.at(i)) {
             emit signal_item_added(get_item(image_data->filename));
@@ -215,15 +224,17 @@ void SimilarImagesFinder::build_similarities_list(
     emit signal_scan_finished();
 }
 
-void SimilarImagesFinder::resize_relatively_to_screen_size(double width_multiplier,
-                                                           double height_multiplier) {
+void SimilarImagesFinder::resize_relatively_to_screen_size(
+    double width_multiplier, double height_multiplier) {
     QSize screen_size = qApp->screens().at(0)->size();
-    resize(screen_size.width() * width_multiplier, screen_size.height() * height_multiplier);
+    resize(screen_size.width() * width_multiplier,
+           screen_size.height() * height_multiplier);
 }
 
 void SimilarImagesFinder::remove_adjucent_blank_items() {
     for (int i = 1; i < ui->list->count(); ++i) {
-        if (ui->list->item(i - 1)->text().isEmpty() && ui->list->item(i)->text().isEmpty()) {
+        if (ui->list->item(i - 1)->text().isEmpty() &&
+            ui->list->item(i)->text().isEmpty()) {
             delete ui->list->item(i - 1);
             --i;
         }
@@ -232,15 +243,17 @@ void SimilarImagesFinder::remove_adjucent_blank_items() {
 
 QImage SimilarImagesFinder::get_current_item_thumbnail() const {
     return QImage(ui->list->currentItem()->text())
-        .scaled(ui->image->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        .scaled(ui->image->size(), Qt::KeepAspectRatio,
+                Qt::SmoothTransformation);
 }
 
 QString SimilarImagesFinder::get_current_item_info() const {
     QFileInfo file_info(ui->list->currentItem()->text());
-    QString info_string = "File path: " + file_info.absoluteFilePath() + "\n" +
-                          "Size: " + format_file_size(file_info.size()) + "\n" +
-                          "Created: " + file_info.birthTime().toString() + "\n" +
-                          "Last modified: " + file_info.lastModified().toString();
+    QString info_string =
+        "File path: " + file_info.absoluteFilePath() + "\n" +
+        "Size: " + format_file_size(file_info.size()) + "\n" +
+        "Created: " + file_info.birthTime().toString() + "\n" +
+        "Last modified: " + file_info.lastModified().toString();
     return info_string;
 }
 
@@ -265,15 +278,18 @@ void SimilarImagesFinder::clear_ui() {
 }
 
 void SimilarImagesFinder::setup_connections() {
-    connect(ui->browse, &QPushButton::clicked, this, &SimilarImagesFinder::slot_browse_clicked);
-    connect(ui->scan, &QPushButton::clicked, this, &SimilarImagesFinder::slot_scan_started);
-    connect(ui->remove, &QPushButton::clicked, this, &SimilarImagesFinder::slot_remove_clicked);
+    connect(ui->browse, &QPushButton::clicked, this,
+            &SimilarImagesFinder::slot_browse_clicked);
+    connect(ui->scan, &QPushButton::clicked, this,
+            &SimilarImagesFinder::slot_scan_started);
+    connect(ui->remove, &QPushButton::clicked, this,
+            &SimilarImagesFinder::slot_remove_clicked);
     connect(ui->list, &QListWidget::currentItemChanged, this,
             &SimilarImagesFinder::slot_list_current_item_changed);
     connect(ui->location, &QLineEdit::textChanged, this,
             &SimilarImagesFinder::slot_location_text_changed);
-    connect(this, &SimilarImagesFinder::signal_scan_stage_iteration_completed, this,
-            &SimilarImagesFinder::slot_scan_stage_iteration_completed);
+    connect(this, &SimilarImagesFinder::signal_scan_stage_iteration_completed,
+            this, &SimilarImagesFinder::slot_scan_stage_iteration_completed);
     connect(this, &SimilarImagesFinder::signal_scan_stage_started, this,
             &SimilarImagesFinder::slot_scan_stage_started);
     connect(this, &SimilarImagesFinder::signal_scan_finished, this,

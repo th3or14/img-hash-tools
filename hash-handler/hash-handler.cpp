@@ -1,9 +1,10 @@
 #include "hash-handler.hpp"
 
-HashHandler::HashHandler(const cv::Ptr<cv::img_hash::ImgHashBase> &hash_algorithm,
-                         const std::function<bool(double)> &thresholding_predicate)
-    : hash_algorithm(hash_algorithm), thresholding_predicate(thresholding_predicate) {
-}
+HashHandler::HashHandler(
+    const cv::Ptr<cv::img_hash::ImgHashBase> &hash_algorithm,
+    const std::function<bool(double)> &thresholding_predicate)
+    : hash_algorithm(hash_algorithm),
+      thresholding_predicate(thresholding_predicate) {}
 
 cv::Mat HashHandler::compute(const cv::Mat &img) {
     cv::Mat hash;

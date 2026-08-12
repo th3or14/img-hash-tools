@@ -49,9 +49,12 @@ private slots:
 
 private:
     HashesPool get_hashes_pool();
-    std::vector<SimilarityCluster> get_similarity_clusters(HashesPool &&hashes_pool);
-    void build_similarities_list(const std::vector<SimilarityCluster> &similarity_clusters);
-    void resize_relatively_to_screen_size(double width_multiplier, double height_multiplier);
+    std::vector<SimilarityCluster>
+    get_similarity_clusters(HashesPool &&hashes_pool);
+    void build_similarities_list(
+        const std::vector<SimilarityCluster> &similarity_clusters);
+    void resize_relatively_to_screen_size(double width_multiplier,
+                                          double height_multiplier);
     void remove_adjucent_blank_items();
     QImage get_current_item_thumbnail() const;
     QString get_current_item_info() const;
