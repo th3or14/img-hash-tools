@@ -240,13 +240,13 @@ void KeyFramesExtractor::extract_key_frames(
 }
 
 void extract_key_frames(const QString &input_video_filename,
-                        const QString &output_location) {
+                        const QString &output_directory) {
     check_file_exists(input_video_filename);
-    check_directory_exists(output_location);
+    check_directory_exists(output_directory);
     static const QString datetimestamp_format =
         "yyyy-MM-ddT" + timestamp_format;
     QString key_frames_directory(
-        output_location + "/" +
+        output_directory + "/" +
         QDateTime::currentDateTime().toString(datetimestamp_format));
     try_create_directory(key_frames_directory);
     KeyFramesExtractor kfe;
