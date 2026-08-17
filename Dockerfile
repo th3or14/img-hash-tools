@@ -5,7 +5,7 @@ ARG BUILD_ARG_OPENCV_VERSION=5.0.0
 WORKDIR /img-hash-tools
 COPY . .
 RUN apt-get update && \
-apt-get install -y wget unzip cmake build-essential libfontconfig libdbus-1-3 '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libavcodec-dev libavformat-dev libswscale-dev libgtk2.0-dev qt6-base-dev qmake6 && \
+apt-get install -y wget cmake build-essential libfontconfig libdbus-1-3 '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libavcodec-dev libavformat-dev libswscale-dev libgtk2.0-dev qt6-base-dev qmake6 && \
 wget -O opencv-$BUILD_ARG_OPENCV_VERSION.tar.gz https://codeload.github.com/opencv/opencv/tar.gz/$BUILD_ARG_OPENCV_VERSION && \
 tar -xf opencv-$BUILD_ARG_OPENCV_VERSION.tar.gz && \
 rm opencv-$BUILD_ARG_OPENCV_VERSION.tar.gz && \
