@@ -9,7 +9,7 @@ struct ImageData {
 };
 
 static QString format_file_size(qint64 bytes) {
-    QString b = QString("%L1").arg(bytes, -1, 'f', 0, ' ') + " bytes";
+    QString b = QString::number(bytes) + " bytes";
     double kb = static_cast<double>(bytes) / 1000;
     if (kb < 1.) {
         return b;
