@@ -23,6 +23,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install Qt
+      shell: bash
       run: |
         wget https://github.com/miurahr/aqtinstall/releases/download/v3.3.0/aqt.exe
         ./aqt.exe install-qt windows desktop 6.8.3 win64_msvc2022_64
