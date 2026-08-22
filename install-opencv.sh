@@ -20,6 +20,12 @@ else
     git pull --rebase
     cd ..
 fi
+cd opencv
+git reset --hard 5.0.0
+cd ..
+cd opencv_contrib
+git reset --hard 5.0.0
+cd ..
 RepoSource=opencv
 mkdir -p build_opencv
 pushd build_opencv
