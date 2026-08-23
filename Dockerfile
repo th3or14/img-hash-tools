@@ -18,12 +18,12 @@ rm -r opencv_contrib-$BUILD_ARG_OPENCV_VERSION && \
 cd opencv-$BUILD_ARG_OPENCV_VERSION && \
 mkdir build && \
 cd build && \
-cmake -DBUILD_opencv_world=OFF -DBUILD_LIST=img_hash,videoio,imgcodecs -DCMAKE_BUILD_TYPE=Release -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_DOCS=OFF -DOPENCV_EXTRA_MODULES_PATH=../../only_img_hash_module .. && \
+cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_opencv_world=OFF -DBUILD_LIST=img_hash,videoio,imgcodecs -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_DOCS=OFF -DBUILD_EXAMPLES=OFF -DOPENCV_EXTRA_MODULES_PATH=../../only_img_hash_module .. && \
 make -j $(nproc --all) && \
 make install && \
 cd ../.. && \
 rm -r opencv-$BUILD_ARG_OPENCV_VERSION only_img_hash_module && \
 mkdir build && \
 cd build && \
-cmake .. -DCMAKE_CXX_COMPILER:STRING=$(which g++) -DCMAKE_C_COMPILER:STRING=$(which gcc) && \
+cmake -DCMAKE_CXX_COMPILER:STRING=$(which g++) -DCMAKE_C_COMPILER:STRING=$(which gcc) .. && \
 make -j $(nproc --all)
