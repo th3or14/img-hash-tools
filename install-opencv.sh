@@ -28,7 +28,7 @@ cp -rf opencv_contrib/modules/img_hash only_img_hash_module
 RepoSource=opencv
 mkdir -p build_opencv
 pushd build_opencv
-CMAKE_OPTIONS=(-DBUILD_opencv_world=OFF -DBUILD_LIST=img_hash,videoio,imgcodecs -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_DOCS=OFF -DWITH_CUDA=OFF -DBUILD_EXAMPLES=OFF -DINSTALL_CREATE_DISTRIB=ON)
+CMAKE_OPTIONS=(-DCMAKE_BUILD_TYPE=Release -DBUILD_opencv_world=OFF -DBUILD_LIST=img_hash,videoio,imgcodecs -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_DOCS=OFF -DWITH_CUDA=OFF -DBUILD_EXAMPLES=OFF -DINSTALL_CREATE_DISTRIB=ON)
 set -x
 cmake "${CMAKE_GENERATOR_OPTIONS[@]}" "${CMAKE_OPTIONS[@]}" -DOPENCV_EXTRA_MODULES_PATH="$myRepo"/only_img_hash_module -DCMAKE_INSTALL_PREFIX="$myRepo/install/$RepoSource" "$myRepo/$RepoSource"
 echo "************************* $Source_DIR -->release"

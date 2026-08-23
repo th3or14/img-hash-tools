@@ -25,5 +25,5 @@ cd ../.. && \
 rm -r opencv-$BUILD_ARG_OPENCV_VERSION only_img_hash_module && \
 mkdir build && \
 cd build && \
-cmake -DCMAKE_CXX_COMPILER:STRING=$(which g++) -DCMAKE_C_COMPILER:STRING=$(which gcc) .. && \
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER:STRING=$(which g++) -DCMAKE_C_COMPILER:STRING=$(which gcc) .. && \
 make -j $(nproc --all)
