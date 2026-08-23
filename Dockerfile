@@ -18,7 +18,7 @@ rm -r opencv_contrib-$BUILD_ARG_OPENCV_VERSION && \
 cd opencv-$BUILD_ARG_OPENCV_VERSION && \
 mkdir build && \
 cd build && \
-cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_DOCS=OFF -DOPENCV_EXTRA_MODULES_PATH=../../only_img_hash_module .. && \
+cmake -DBUILD_LIST=img_hash,videoio,imgcodecs -DCMAKE_BUILD_TYPE=Release -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_DOCS=OFF -DOPENCV_EXTRA_MODULES_PATH=../../only_img_hash_module .. && \
 make -j $(nproc --all) && \
 make install && \
 cd ../.. && \

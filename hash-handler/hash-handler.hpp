@@ -4,8 +4,9 @@
 #include <memory>
 #include <queue>
 
-#include <opencv2/highgui.hpp>
 #include <opencv2/img_hash.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/videoio.hpp>
 
 class HashHandler {
 public:
