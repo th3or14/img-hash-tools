@@ -46,14 +46,14 @@ jobs:
         cd opencv
         mkdir build
         cd build
-        cmake -G ${{env.GENERATOR}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBUILD_opencv_world=OFF -DBUILD_LIST=img_hash,videoio,imgcodecs -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_DOCS=OFF -DWITH_CUDA=OFF -DBUILD_EXAMPLES=OFF -DINSTALL_CREATE_DISTRIB=ON -DOPENCV_EXTRA_MODULES_PATH=../../only_img_hash_module -DCMAKE_INSTALL_PREFIX=../../install/opencv ..
+        cmake -G "${{env.GENERATOR}}" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBUILD_opencv_world=OFF -DBUILD_LIST=img_hash,videoio,imgcodecs -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_DOCS=OFF -DWITH_CUDA=OFF -DBUILD_EXAMPLES=OFF -DINSTALL_CREATE_DISTRIB=ON -DOPENCV_EXTRA_MODULES_PATH=../../only_img_hash_module -DCMAKE_INSTALL_PREFIX=../../install/opencv ..
         cmake --build . --config ${{env.BUILD_TYPE}}
         cmake --build . --target install --config ${{env.BUILD_TYPE}}
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -G ${{env.GENERATOR}} -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PREFIX_PATH="${{github.workspace}}/6.8.3/msvc2022_64/lib/cmake;${{github.workspace}}/install/opencv"
+      run: cmake -G "${{env.GENERATOR}}" -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PREFIX_PATH="${{github.workspace}}/6.8.3/msvc2022_64/lib/cmake;${{github.workspace}}/install/opencv"
 
     - name: Build
       # Build your program with the given configuration
