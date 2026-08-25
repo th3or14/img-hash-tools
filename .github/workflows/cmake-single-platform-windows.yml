@@ -11,6 +11,7 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
+  OPENCV_VERSION: 5.0.0
 
 jobs:
   build:
@@ -34,10 +35,10 @@ jobs:
         git clone https://github.com/opencv/opencv.git
         git clone https://github.com/opencv/opencv_contrib.git
         cd opencv
-        git reset --hard 5.0.0
+        git reset --hard ${{env.OPENCV_VERSION}}
         cd ..
         cd opencv_contrib
-        git reset --hard 5.0.0
+        git reset --hard ${{env.OPENCV_VERSION}}
         cd ..
         mkdir only_img_hash_module
         cp -r opencv_contrib/modules/img_hash only_img_hash_module
