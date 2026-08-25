@@ -31,7 +31,22 @@ jobs:
     - name: Install OpenCV
       shell: bash
       run: |
-        ./install-opencv.sh
+        git clone https://github.com/opencv/opencv.git
+        git clone https://github.com/opencv/opencv_contrib.git
+        cd opencv
+        git reset --hard 5.0.0
+        cd ..
+        cd opencv_contrib
+        git reset --hard 5.0.0
+        cd ..
+        mkdir only_img_hash_module
+        cp -r opencv_contrib/modules/img_hash only_img_hash_module
+        cd opencv
+        mkdir build
+        cd build
+        cmake -G "Visual Studio 18 2026" -DCMAKE_BUILD_TYPE=Release -DBUILD_opencv_world=OFF -DBUILD_LIST=img_hash,videoio,imgcodecs -DBUILD_PERF_TESTS=OFF -DBUILD_TESTS=OFF -DBUILD_DOCS=OFF -DWITH_CUDA=OFF -DBUILD_EXAMPLES=OFF -DINSTALL_CREATE_DISTRIB=ON -DOPENCV_EXTRA_MODULES_PATH=../../only_img_hash_module -DCMAKE_INSTALL_PREFIX=../../install/opencv ..
+        cmake --build . --config release
+        cmake --build . --target install --config release
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
