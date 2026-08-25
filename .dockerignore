@@ -4,3 +4,4 @@ Dockerfile
 docker-start.sh
 README.md
 .dockerignore
+.clang-format
