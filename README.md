@@ -34,4 +34,4 @@ Helps to remove duplicates and almost duplicates from a specified pictures colle
 
 ## Building
 
-Use `CMakeLists.txt` from the top directory. On Linux/X11 you can also build and run this project in a Docker container. Then Docker is required. Run `docker-start.sh` for a quick start. Afterwards, you can call `build/similar-images-finder/similar-images-finder` and `build/key-frames-extractor/key-frames-extractor` in a running container. Input data in a running container can be accessed via the shared folder `shared-folder`, which is mounted to this repository on your host.
+Use `CMakeLists.txt` from the top directory. You may refer to the workflows in `.github/workflows`. On Linux/X11 you can also build and run this project in a Docker container. Then Docker is required. Run `docker-start.sh` for a quick start. Afterwards, you can call `build/similar-images-finder/similar-images-finder` and `build/key-frames-extractor/key-frames-extractor` in a running container. Input data in a running container can be accessed via the shared folder `shared-folder`, which is mounted to this repository on your host.
