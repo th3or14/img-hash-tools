@@ -13,6 +13,7 @@
 #include <QProgressDialog>
 #include <QScreen>
 
+#include <atomic>
 #include <memory>
 #include <thread>
 
@@ -67,6 +68,7 @@ private:
     Ui::Widget *ui;
     HashHandler hash_handler;
     std::unique_ptr<QProgressDialog> progress_dialog;
+    std::atomic<bool> was_scan_canceled;
 };
 
 #endif // SIMILAR_IMAGES_FINDER_HPP

@@ -49,14 +49,16 @@ static QListWidgetItem *get_item(const QString &filename) {
     return item;
 }
 
+static void interrupt_scan() { throw std::runtime_error("Scan was canceled"); }
+
 ImageData::ImageData(const cv::Mat &hash, const QString &filename)
     : hash(hash), filename(filename) {}
 
 SimilarImagesFinder::SimilarImagesFinder()
     : QWidget(), ui(new Ui::Widget),
-      hash_handler(
-          cv::img_hash::PHash::create(),
-          [](double hashes_diff) -> bool { return hashes_diff <= 5; }) {
+      hash_handler(cv::img_hash::PHash::create(),
+                   [](double hashes_diff) -> bool { return hashes_diff <= 5; }),
+      was_scan_canceled(false) {
     ui->setupUi(this);
     resize_relatively_to_screen_size(0.8, 0.8);
     setup_connections();
@@ -78,7 +80,12 @@ void SimilarImagesFinder::slot_scan_started() {
     clear_ui();
     init_progress_dialog();
     std::thread([this]() {
-        build_similarities_list(get_similarity_clusters(get_hashes_pool()));
+        try {
+            build_similarities_list(get_similarity_clusters(get_hashes_pool()));
+        } catch (const std::runtime_error &e) {
+            qDebug() << e.what();
+            emit signal_scan_finished();
+        }
     }).detach();
 }
 
@@ -130,15 +137,28 @@ void SimilarImagesFinder::slot_location_text_changed() {
 
 void SimilarImagesFinder::slot_scan_stage_iteration_completed(double current,
                                                               double total) {
+    if (progress_dialog->wasCanceled()) {
+        was_scan_canceled = true;
+        return;
+    }
     progress_dialog->setValue(current / total * 100);
 }
 
 void SimilarImagesFinder::slot_scan_stage_started(const QString &text) {
+    if (progress_dialog->wasCanceled()) {
+        was_scan_canceled = true;
+        return;
+    }
     progress_dialog->setLabelText(text);
     progress_dialog->setValue(0);
 }
 
 void SimilarImagesFinder::slot_scan_finished() {
+    if (was_scan_canceled) {
+        was_scan_canceled = false;
+        clear_ui();
+        QMessageBox::warning(this, "Attention", "Scan was canceled");
+    }
     deinit_progress_dialog();
     setEnabled(true);
 }
@@ -161,6 +181,9 @@ HashesPool SimilarImagesFinder::get_hashes_pool() {
     std::unique_ptr<QDirIterator> dir_it = init_dir_it();
     HashesPool hashes_pool;
     for (size_t files_scanned = 0; dir_it->hasNext(); ++files_scanned) {
+        if (was_scan_canceled) {
+            interrupt_scan();
+        }
         emit signal_scan_stage_iteration_completed(files_scanned + 1,
                                                    files_cnt);
         dir_it->next();
@@ -187,6 +210,9 @@ SimilarImagesFinder::get_similarity_clusters(HashesPool &&hashes_pool) {
         "Building similarity clusters (stage 2 of 3)...");
     std::vector<SimilarityCluster> similarity_clusters;
     for (size_t i = 0; i < hashes_pool.size(); ++i) {
+        if (was_scan_canceled) {
+            interrupt_scan();
+        }
         emit signal_scan_stage_iteration_completed(i + 1, hashes_pool.size());
         if (hashes_pool.at(i) == nullptr) {
             continue;
@@ -214,6 +240,9 @@ void SimilarImagesFinder::build_similarities_list(
     emit signal_scan_stage_started(
         "Building similarities list (stage 3 of 3)...");
     for (size_t i = 0; i < similarity_clusters.size(); ++i) {
+        if (was_scan_canceled) {
+            interrupt_scan();
+        }
         emit signal_scan_stage_iteration_completed(i + 1,
                                                    similarity_clusters.size());
         emit signal_item_added(get_blank_item());
@@ -260,7 +289,6 @@ QString SimilarImagesFinder::get_current_item_info() const {
 void SimilarImagesFinder::init_progress_dialog() {
     progress_dialog = std::make_unique<QProgressDialog>(this);
     progress_dialog->setWindowTitle("Scan is in progress");
-    progress_dialog->setCancelButton(nullptr);
     progress_dialog->open();
 }
 
