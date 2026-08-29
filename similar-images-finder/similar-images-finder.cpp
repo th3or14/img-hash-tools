@@ -260,7 +260,6 @@ QString SimilarImagesFinder::get_current_item_info() const {
 void SimilarImagesFinder::init_progress_dialog() {
     progress_dialog = std::make_unique<QProgressDialog>(this);
     progress_dialog->setWindowTitle("Scan is in progress");
-    progress_dialog->setWindowModality(Qt::WindowModal);
     progress_dialog->setCancelButton(nullptr);
     progress_dialog->open();
 }
