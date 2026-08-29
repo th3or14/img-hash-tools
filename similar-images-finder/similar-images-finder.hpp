@@ -13,6 +13,7 @@
 #include <QProgressDialog>
 #include <QScreen>
 
+#include <memory>
 #include <thread>
 
 namespace Ui {
@@ -65,7 +66,7 @@ private:
 
     Ui::Widget *ui;
     HashHandler hash_handler;
-    QProgressDialog *progress_dialog;
+    std::unique_ptr<QProgressDialog> progress_dialog;
 };
 
 #endif // SIMILAR_IMAGES_FINDER_HPP

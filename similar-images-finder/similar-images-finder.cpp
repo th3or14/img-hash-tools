@@ -54,9 +54,9 @@ ImageData::ImageData(const cv::Mat &hash, const QString &filename)
 
 SimilarImagesFinder::SimilarImagesFinder()
     : QWidget(), ui(new Ui::Widget),
-      hash_handler(cv::img_hash::PHash::create(),
-                   [](double hashes_diff) -> bool { return hashes_diff <= 5; }),
-      progress_dialog(nullptr) {
+      hash_handler(
+          cv::img_hash::PHash::create(),
+          [](double hashes_diff) -> bool { return hashes_diff <= 5; }) {
     ui->setupUi(this);
     resize_relatively_to_screen_size(0.8, 0.8);
     setup_connections();
@@ -258,11 +258,10 @@ QString SimilarImagesFinder::get_current_item_info() const {
 }
 
 void SimilarImagesFinder::init_progress_dialog() {
-    progress_dialog = new QProgressDialog(this);
+    progress_dialog = std::make_unique<QProgressDialog>(this);
     progress_dialog->setWindowTitle("Scan is in progress");
     progress_dialog->setWindowModality(Qt::WindowModal);
     progress_dialog->setCancelButton(nullptr);
-    progress_dialog->setAttribute(Qt::WA_DeleteOnClose);
     progress_dialog->open();
 }
 
