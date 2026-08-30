@@ -193,7 +193,7 @@ HashesPool SimilarImagesFinder::get_hashes_pool() {
         dir_it->next();
         cv::Mat img = cv::imread(dir_it->filePath().toStdString());
         if (img.empty()) {
-            qDebug() << "Failed to read " << dir_it->filePath();
+            qDebug() << "Failed to read" << dir_it->filePath();
             continue;
         }
         hashes_pool.push_back(std::make_unique<ImageData>(
