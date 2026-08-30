@@ -1,4 +1,4 @@
-name: Linux Docker
+name: Linux Docker Build
 
 on:
   push:

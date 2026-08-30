@@ -1,4 +1,4 @@
-[![Linux Docker](https://github.com/th3or14/img-hash-tools/actions/workflows/linux-docker.yml/badge.svg)](https://github.com/th3or14/img-hash-tools/actions/workflows/linux-docker.yml)
+[![Linux Docker Build](https://github.com/th3or14/img-hash-tools/actions/workflows/linux-docker-build.yml/badge.svg)](https://github.com/th3or14/img-hash-tools/actions/workflows/linux-docker-build.yml)
 
 [![Windows Build](https://github.com/th3or14/img-hash-tools/actions/workflows/windows-build.yml/badge.svg)](https://github.com/th3or14/img-hash-tools/actions/workflows/windows-build.yml)
 
