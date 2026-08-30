@@ -160,6 +160,7 @@ void SimilarImagesFinder::slot_scan_finished() {
         QMessageBox::warning(this, "Attention", "Scan was canceled");
     }
     progress_dialog->close();
+    progress_dialog = nullptr;
     setEnabled(true);
 }
 
