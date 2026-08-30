@@ -290,7 +290,6 @@ void SimilarImagesFinder::init_progress_dialog() {
     progress_dialog = new QProgressDialog(this, Qt::ToolTip);
     progress_dialog->setWindowTitle("Scan is in progress");
     progress_dialog->setAttribute(Qt::WA_DeleteOnClose);
-    progress_dialog->open();
 }
 
 void SimilarImagesFinder::clear_ui() {
