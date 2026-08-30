@@ -84,6 +84,9 @@ void SimilarImagesFinder::slot_scan_started() {
             build_similarities_list(get_similarity_clusters(get_hashes_pool()));
         } catch (const std::runtime_error &e) {
             qDebug() << e.what();
+            if (!was_scan_canceled) {
+                throw;
+            }
             emit signal_scan_finished();
         }
     }).detach();
