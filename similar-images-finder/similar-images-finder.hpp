@@ -14,7 +14,6 @@
 #include <QScreen>
 
 #include <atomic>
-#include <memory>
 #include <thread>
 
 namespace Ui {
@@ -61,13 +60,12 @@ private:
     QImage get_current_item_thumbnail() const;
     QString get_current_item_info() const;
     void init_progress_dialog();
-    void deinit_progress_dialog();
     void clear_ui();
     void setup_connections();
 
     Ui::Widget *ui;
     HashHandler hash_handler;
-    std::unique_ptr<QProgressDialog> progress_dialog;
+    QProgressDialog *progress_dialog;
     std::atomic<bool> was_scan_canceled;
 };
 
