@@ -191,10 +191,9 @@ HashesPool SimilarImagesFinder::get_hashes_pool() {
         emit signal_scan_stage_iteration_completed(files_scanned + 1,
                                                    files_cnt);
         dir_it->next();
-        cv::Mat img;
-        img = cv::imread(dir_it->filePath().toStdString());
+        cv::Mat img = cv::imread(dir_it->filePath().toStdString());
         if (img.empty()) {
-            qDebug() << "Empty image " << dir_it->filePath();
+            qDebug() << "Failed to read " << dir_it->filePath();
             continue;
         }
         hashes_pool.push_back(std::make_unique<ImageData>(
