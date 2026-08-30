@@ -159,7 +159,7 @@ void SimilarImagesFinder::slot_scan_finished() {
         clear_ui();
         QMessageBox::warning(this, "Attention", "Scan was canceled");
     }
-    progress_dialog->close();
+    progress_dialog->deleteLater();
     progress_dialog = nullptr;
     setEnabled(true);
 }
@@ -288,9 +288,8 @@ QString SimilarImagesFinder::get_current_item_info() const {
 }
 
 void SimilarImagesFinder::init_progress_dialog() {
-    progress_dialog = new QProgressDialog(this, Qt::ToolTip);
+    progress_dialog = new QProgressDialog(this);
     progress_dialog->setWindowTitle("Scan is in progress");
-    progress_dialog->setAttribute(Qt::WA_DeleteOnClose);
     progress_dialog->setMinimumDuration(0);
 }
 
